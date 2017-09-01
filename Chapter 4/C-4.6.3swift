@@ -1,0 +1,33 @@
+// Chapter 4, Challenge 4.6.3
+//Vito's Family
+
+var totalTime = 0
+var origin = [1,2,5,10]
+var destiny = [Int]()
+origin.sort()
+
+while (origin.count > 0) {
+    if destiny.count > 0 {
+        let crossBackMan = destiny.removeFirst()
+        print("Crossing back: \(crossBackMan)")
+        origin.append(crossBackMan)
+        origin.sort()
+        totalTime += crossBackMan
+    }
+    var crossGroup = [Int]()
+    for _ in 0..<2 {
+        if origin.count > 0 {
+            if let pos = destiny.first, pos < origin.last! {
+                crossGroup.append(origin.removeLast())
+            } else {
+                crossGroup.append(origin.removeFirst())
+            }
+        }
+    }
+    print("Crossing: \(crossGroup)")
+    totalTime += crossGroup.max()!
+    destiny.append(contentsOf: crossGroup)
+    destiny.sort()
+}
+
+print("Total time: \(totalTime)")
