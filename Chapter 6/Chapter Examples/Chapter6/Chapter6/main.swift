@@ -1,8 +1,8 @@
 //
 //  main.swift
-//  Chapter5
+//  Chapter6
 //
-//  Created by Danno on 9/6/17.
+//  Created by Danno on 9/7/17.
 //  Copyright © 2017 Daniel Heredia. All rights reserved.
 //
 

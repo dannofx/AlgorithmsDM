@@ -2,32 +2,34 @@
 //Vito's Family
 
 var totalTime = 0
-var origin = [1,2,5,10]
-var destiny = [Int]()
-origin.sort()
+var originArray = [1,2,5,10]
+//var destiny = [Int]()
+
+var origin = Heap<Int>()
+origin.heapify(array: originArray)
+var destiny = Heap<Int>()
 
 while (origin.count > 0) {
-    if destiny.count > 0 {
-        let crossBackMan = destiny.removeFirst()
+    if let crossBackMan = destiny.extractMin() {
         print("Crossing back: \(crossBackMan)")
-        origin.append(crossBackMan)
-        origin.sort()
+        origin.insert(element: crossBackMan)
         totalTime += crossBackMan
     }
     var crossGroup = [Int]()
     for _ in 0..<2 {
         if origin.count > 0 {
-            if let pos = destiny.first, pos < origin.last! {
-                crossGroup.append(origin.removeLast())
+            if let pos = destiny.getMinimum(), pos < origin.getMaximum()! {
+                crossGroup.append(origin.extractMax()!)
             } else {
-                crossGroup.append(origin.removeFirst())
+                crossGroup.append(origin.extractMin()!)
             }
         }
     }
     print("Crossing: \(crossGroup)")
     totalTime += crossGroup.max()!
-    destiny.append(contentsOf: crossGroup)
-    destiny.sort()
+    for element in crossGroup {
+        destiny.insert(element: element)
+    }
 }
 
 print("Total time: \(totalTime)")
