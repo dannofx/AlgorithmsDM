@@ -1,3 +1,11 @@
+//
+//  Line.swift
+//  EraseMe
+//
+//  Created by Danno on 10/19/17.
+//  Copyright © 2017 Daniel Heredia. All rights reserved.
+//
+
 import Foundation
 
 let epsilon = 0.00001
@@ -5,6 +13,10 @@ let epsilon = 0.00001
 struct Point {
     var x: Double
     var y: Double
+    
+    func distance(to point: Point) -> Double{
+        return sqrt(( pow((point.x - self.x), 2.0) + pow((point.y - self.y), 2.0) ))
+    }
 }
 
 struct Line {
@@ -72,5 +84,3 @@ struct Line {
         return result
     }
 }
-
-
