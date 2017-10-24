@@ -1,6 +1,5 @@
 //
-//  Line.swift
-//  EraseMe
+//  GeometricShapes.swift
 //
 //  Created by Danno on 10/19/17.
 //  Copyright © 2017 Daniel Heredia. All rights reserved.
@@ -9,6 +8,12 @@
 import Foundation
 
 let epsilon = 0.00001
+
+func pointInBox(point1: Point, point2: Point, target: Point) -> Bool {
+    let (x1, x2) = point1.x > point2.x ? (point2.x, point1.x) : (point1.x, point2.x)
+    let (y1, y2) = point1.y > point2.y ? (point2.y, point1.y) : (point1.y, point2.y)
+    return target.x >= x1 && target.x <= x2 && target.y >= y1 && target.y <= y2
+}
 
 struct Point {
     var x: Double
@@ -59,7 +64,7 @@ struct Line {
             print("Error: Distinct parallel lines do not intersect.")
             return nil
         }
-        let x: Double = (line.b * self.c - self.b - line.c) / (line.a * self.b - self.a * line.b)
+        let x: Double = (line.b * self.c - self.b * line.c) / (line.a * self.b - self.a * line.b)
         var y: Double!
         if abs(self.b) > epsilon {
             y = -(self.a * x + self.c) / self.b
@@ -78,9 +83,33 @@ struct Line {
             result.y = -self.c
             result.x = point.x
         } else {
-            let line = Line(slope: (1 / self.a), point: point)
+            let line = Line(slope: (1.0 / self.a), point: point)
             result = self.findIntersection(line: line)!
         }
         return result
+    }
+}
+
+struct Circle {
+    let radius: Double
+    let center: Point
+    
+    func findClosestDistanceToSegment(_ p1: Point, _ p2: Point) -> Double? {
+        let line = Line(point1: p1, point2: p2)
+        let closestPoint = line.findClosestPoint(toPoint: self.center)
+        let inBox = pointInBox(point1: p1, point2: p2, target: closestPoint)
+        if inBox {
+             return closestPoint.distance(to: self.center)
+        } else {
+            return nil
+        }
+    }
+    
+    func intersectsSegment(_ p1: Point, _ p2: Point) -> Bool {
+        if let distance = self.findClosestDistanceToSegment(p1, p2) {
+            return distance < self.radius
+        } else {
+            return false
+        }        
     }
 }

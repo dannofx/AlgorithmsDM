@@ -21,11 +21,6 @@
 
 import Foundation
 
-struct Circle {
-    let radio: Double
-    let center: Point
-}
-
 func pointInBox(point1: Point, point2: Point, target: Point) -> Bool {
     let (x1, x2) = point1.x > point2.x ? (point2.x, point1.x) : (point1.x, point2.x)
     let (y1, y2) = point1.y > point2.y ? (point2.y, point1.y) : (point1.y, point2.y)
