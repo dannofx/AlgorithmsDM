@@ -1,5 +1,6 @@
 //
-//  GeometricShapes.swift
+//  Line.swift
+//  EraseMe
 //
 //  Created by Danno on 10/19/17.
 //  Copyright © 2017 Daniel Heredia. All rights reserved.
