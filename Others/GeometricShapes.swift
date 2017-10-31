@@ -1,6 +1,6 @@
 //
 //  Line.swift
-//  EraseMe
+//  Geometry
 //
 //  Created by Danno on 10/19/17.
 //  Copyright © 2017 Daniel Heredia. All rights reserved.
@@ -8,35 +8,10 @@
 
 import Foundation
 
+// Error range
 let epsilon = 0.00001
 
-func pointInBox(point1: Point, point2: Point, target: Point) -> Bool {
-    let (x1, x2) = point1.x > point2.x ? (point2.x, point1.x) : (point1.x, point2.x)
-    let (y1, y2) = point1.y > point2.y ? (point2.y, point1.y) : (point1.y, point2.y)
-    return target.x >= x1 && target.x <= x2 && target.y >= y1 && target.y <= y2
-}
-
-func signedTriangleArea(pointA: Point, pointB: Point, pointC: Point) -> Double{
-    return ( pointA.x * pointB.y - pointA.y * pointB.x
-            + pointA.y * pointC.x - pointA.x * pointC.y
-            + pointB.x * pointC.y - pointC.x * pointB.y) / 2.0
-}
-
-func triangleArea(pointA: Point, pointB: Point, pointC: Point) -> Double{
-    return abs(signedTriangleArea(pointA: pointA, pointB: pointB, pointC: pointC))
-}
-
-func ccw(pointA: Point, pointB: Point, pointC: Point) -> Bool {
-    return signedTriangleArea(pointA: pointA, pointB: pointB, pointC: pointC) > epsilon
-}
-
-func cw(pointA: Point, pointB: Point, pointC: Point) -> Bool {
-    return signedTriangleArea(pointA: pointA, pointB: pointB, pointC: pointC) < epsilon
-}
-
-func collinear(pointA: Point, pointB: Point, pointC: Point) -> Bool {
-    return abs(signedTriangleArea(pointA: pointA, pointB: pointB, pointC: pointC)) <= epsilon
-}
+// MARK: Point structure
 
 struct Point {
     var x: Double
@@ -70,10 +45,12 @@ struct Segment {
         }
         
         let intersection = line1.findIntersection(line: line2)!
-        return pointInBox(point1: intersection, point2: self.p1, target: self.p2) &&
-               pointInBox(point1: intersection, point2: segment.p1, target: segment.p2)
+        return pointInBox(point1: self.p1, point2: self.p2, target: intersection) &&
+               pointInBox(point1: segment.p1, point2: segment.p2, target: intersection)
     }
 }
+
+// MARK: Line structure
 
 struct Line {
     var a: Double // X coefficcient
@@ -88,7 +65,7 @@ struct Line {
         } else {
             self.b = 1
             self.a = -(point1.y - point2.y) / (point1.x - point2.x)
-            self.c = -(self.a * point1.x) - (self.b * point1.x)
+            self.c = -(self.a * point1.x) - (self.b * point1.y)
         }
     }
     
@@ -141,6 +118,8 @@ struct Line {
     }
 }
 
+// MARK: Circle structure
+
 struct Circle {
     let radius: Double
     let center: Point
@@ -165,35 +144,55 @@ struct Circle {
     }
 }
 
+// MARK: Triangle structure
+
 struct Triangle {
     let points: [Point]
-    init(p1: Point, p2: Point, p3: Point) {
-        points = [p1, p2, p3]
+    init(point1: Point, point2: Point, point3: Point) {
+        points = [point1, point2, point3]
     }
     
     static func convertToTriangle(points: [Point]) -> Triangle? {
         if points.count != 3 {
             return nil
         } else {
-            return Triangle(p1: points[0], p2: points[1], p3: points[2])
+            return Triangle(point1: points[0], point2: points[1], point3: points[2])
         }
     }
     
-    var p1: Point {
+    var point1: Point {
         return points[0]
     }
     
-    var p2: Point {
+    var point2: Point {
         return points[1]
     }
     
-    var p3: Point {
+    var point3: Point {
         return points[2]
+    }
+    
+    static func signedArea(pointA: Point, pointB: Point, pointC: Point) -> Double{
+        return ( pointA.x * pointB.y - pointA.y * pointB.x
+            + pointA.y * pointC.x - pointA.x * pointC.y
+            + pointB.x * pointC.y - pointC.x * pointB.y) / 2.0
+    }
+    
+    static func area(pointA: Point, pointB: Point, pointC: Point) -> Double{
+        return abs(self.signedArea(pointA: pointA, pointB: pointB, pointC: pointC))
+    }
+    
+    func signedArea() -> Double {
+        return Triangle.area(pointA: self.point1, pointB: self.point2, pointC: self.point3)
+    }
+    
+    func area() -> Double {
+        return Triangle.area(pointA: self.point1, pointB: self.point2, pointC: self.point3)
     }
     
     func containsPoint(_ point: Point) -> Bool {
         for i in 0..<points.count {
-            if cw(pointA: self.points[i], pointB: self.points[i % 3], pointC: point) {
+            if ccw(pointA: self.points[i], pointB: self.points[(i + 1) % 3], pointC: point) {
                 return false
             }
         }
@@ -201,25 +200,20 @@ struct Triangle {
     }
 }
 
-struct Triangulation {
-    var triangleVertices = [(Int, Int, Int)]()
-    var size: Int {
-        return triangleVertices.count
-    }
-    
-    mutating func addTriangleVertices(i1: Int, i2: Int, i3: Int) {
-        self.triangleVertices.append((i1, i2, i3))
-    }
-}
+// MARK: Polygon structure
 
 struct Polygon {
-    let points: [Point]
     
+    enum PolygonError: Error {
+        case triangulationConversion(String)
+    }
+
+    let points: [Point]
     func triangleIsAnEar(indexP1: Int, indexP2: Int, indexP3: Int) -> Bool {
-        let triangle = Triangle(p1: self.points[indexP1],
-                                p2: self.points[indexP2],
-                                p3: self.points[indexP3])
-        if cw(pointA: triangle.p1, pointB: triangle.p2, pointC: triangle.p3) {
+        let triangle = Triangle(point1: self.points[indexP1],
+                                point2: self.points[indexP2],
+                                point3: self.points[indexP3])
+        if !cw(pointA: triangle.point1, pointB: triangle.point2, pointC: triangle.point3) {
             return false
         }
         for i in 0..<self.points.count {
@@ -233,8 +227,8 @@ struct Polygon {
         return true
     }
     
-    func triangulate() -> Triangulation {
-        var triangulation = Triangulation()
+    func triangulate() -> [(vertexIndexA: Int, vertexIndexB: Int, vertexIndexC: Int)] {
+        var trianglesVertices = [(Int, Int, Int)]()
         var leftIndices = [Int](repeating: 0, count: self.points.count)
         var rightIndices = [Int](repeating: 0, count: self.points.count)
         for i in 0..<self.points.count {
@@ -243,25 +237,63 @@ struct Polygon {
             let r = ( i + 1 + self.points.count ) % self.points.count
             rightIndices[i] = r
         }
+
         var i = self.points.count - 1
-        while triangulation.size < (self.points.count - 2) {
+        while trianglesVertices.count != (self.points.count - 2) {
             i = rightIndices[i]
             if self.triangleIsAnEar(indexP1: leftIndices[i], indexP2: i, indexP3: rightIndices[i]) {
-                triangulation.addTriangleVertices(i1: leftIndices[i], i2: i, i3: rightIndices[i])
+                trianglesVertices.append((leftIndices[i], i, rightIndices[i]))
                 leftIndices[rightIndices[i]] = leftIndices[i]
                 rightIndices[leftIndices[i]] = rightIndices[i]
             }
         }
-        return triangulation
+        return trianglesVertices
+    }
+    
+    func convertTriangulation(_ triangulation: [(Int, Int, Int)]) throws -> [Triangle] {
+        var triangles = [Triangle]()
+        for triangleVertices in triangulation {
+            if triangleVertices.0 < 0 || triangleVertices.0 >= self.points.count ||
+                triangleVertices.1 < 0 || triangleVertices.1 >= self.points.count ||
+                triangleVertices.2 < 0 || triangleVertices.2 >= self.points.count {
+                throw PolygonError.triangulationConversion("The triangulation indices doesn't coincide with the polygon points")
+            }
+            triangles.append(Triangle(point1: self.points[triangleVertices.0],
+                                      point2: self.points[triangleVertices.1],
+                                      point3: self.points[triangleVertices.2]))
+        }
+        return triangles
     }
     
     func area() -> Double {
         var area = 0.0
         for i in 0..<self.points.count {
-            let j = ( i + 1) % self.points.count
+            let j = ( i + 1 ) % self.points.count
             area += (self.points[i].x * self.points[j].y) - (self.points[j].x * self.points[i].y)
         }
-        return area / 2.0
+        return area / -2.0
     }
 }
 
+// MARK: Some util methods
+
+// Checks if a point is contained in the rectangle formed by another 2 points
+func pointInBox(point1: Point, point2: Point, target: Point) -> Bool {
+    let (x1, x2) = point1.x > point2.x ? (point2.x, point1.x) : (point1.x, point2.x)
+    let (y1, y2) = point1.y > point2.y ? (point2.y, point1.y) : (point1.y, point2.y)
+    return target.x >= x1 && target.x <= x2 && target.y >= y1 && target.y <= y2
+}
+
+// Determines if the orientation of 3 ordered points is clockwise
+func cw(pointA: Point, pointB: Point, pointC: Point) -> Bool {
+    return Triangle.signedArea(pointA: pointA, pointB: pointB, pointC: pointC) < ( epsilon * -1 )
+}
+// Determines if the orientation of 3 ordered points is counter clockwise
+func ccw(pointA: Point, pointB: Point, pointC: Point) -> Bool {
+    return Triangle.signedArea(pointA: pointA, pointB: pointB, pointC: pointC) > epsilon
+}
+
+// Determines if the orientation of 3 ordered points are collinear
+func collinear(pointA: Point, pointB: Point, pointC: Point) -> Bool {
+    return abs(Triangle.signedArea(pointA: pointA, pointB: pointB, pointC: pointC)) <= epsilon
+}
