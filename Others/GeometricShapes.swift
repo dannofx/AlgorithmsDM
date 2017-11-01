@@ -271,7 +271,7 @@ struct Polygon {
             let j = ( i + 1 ) % self.points.count
             area += (self.points[i].x * self.points[j].y) - (self.points[j].x * self.points[i].y)
         }
-        return area / -2.0
+        return abs(area / 2.0)
     }
 }
 
