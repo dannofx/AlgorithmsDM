@@ -14,14 +14,28 @@ extension Polygon {
             let rayEndPoint = Point(x: max(edgeP1.x, edgeP2.x) + 1.0, y: point.y)
             let ray = Segment(p1: point, p2: rayEndPoint)
             if edge.intersectsSegment(segment: ray) {
+                // If the point lies on the segment can be considered inside the polygon
                 if edge.liesOnSegment(point: point) {
                     return true
                 }
+                // When the ray overlaps a horizontal edge
+                // or the ray intersects with the first vertex of the segment
+                // that intersection will be ignored.
+                // This because the overlap cannot be considered as a cut to the edge
+                // and the vertex cut will be considered in one of the 2 involved segments.
                 if edge.p1.y ==== point.y {
                     continue
                 }
+                // If the ray cuts the second vertex of a fragment
+                // it can be considered as a cut to the segment
+                // just if it doesn't fall in one of the special cases
                 if edge.p2.y ==== point.y {
                     let nextEdgeP = self.points[(i + 2) % self.points.count]
+                    // To be considered a cut to the segment, the current segment
+                    // and the next one must have the one of the following
+                    // forms: < , >, the cut will be discarded if the
+                    // next segment is horizontal or the form the segments
+                    // is: v or ^.
                     if edge.p2.y ==== edge.p1.y || edge.p2.y ==== nextEdgeP.y {
                         continue
                     }

@@ -14,6 +14,7 @@ let epsilon = 0.00001
 infix operator <<=: AdditionPrecedence
 infix operator >>=: AdditionPrecedence
 infix operator ====: AdditionPrecedence
+infix operator !===: AdditionPrecedence
 
 // MARK: Point structure
 
@@ -39,19 +40,51 @@ struct Segment {
         let line2 = Line(point1: segment.p1, point2: segment.p2)
         if line1.isSameLine(line2) {
             return pointInBox(point1: self.p1, point2: self.p2, target: segment.p1) ||
-                   pointInBox(point1: self.p1, point2: self.p2, target: segment.p2) ||
-                   pointInBox(point1: segment.p1, point2: segment.p2, target: self.p1) ||
-                   pointInBox(point1: segment.p1, point2: segment.p2, target: self.p2)
+                pointInBox(point1: self.p1, point2: self.p2, target: segment.p2) ||
+                pointInBox(point1: segment.p1, point2: segment.p2, target: self.p1) ||
+                pointInBox(point1: segment.p1, point2: segment.p2, target: self.p2)
         }
-        
+
         if line1.isParallel(line: line2) {
             return  false
         }
-        
+
         let intersection = line1.findIntersection(line: line2)!
         return pointInBox(point1: self.p1, point2: self.p2, target: intersection) &&
-               pointInBox(point1: segment.p1, point2: segment.p2, target: intersection)
+            pointInBox(point1: segment.p1, point2: segment.p2, target: intersection)
     }
+    
+//    Alternative implementation using determinants
+//    func intersectsSegment(segment: Segment) -> Bool {
+//        let localOrientation1 = orientation(pointA: self.p1, pointB: self.p2, pointC: segment.p1)
+//        let localOrientation2 = orientation(pointA: self.p1, pointB: self.p2, pointC: segment.p2)
+//        let segmentOrientation1 = orientation(pointA: segment.p1, pointB: segment.p2, pointC: self.p1)
+//        let segmentOrientation2 = orientation(pointA: segment.p1, pointB: segment.p2, pointC: self.p2)
+//
+//        // General situation
+//        if (localOrientation1 != localOrientation2 &&
+//            segmentOrientation1 != segmentOrientation2) {
+//            return true
+//        }
+//        //Special cases for collinear segments
+//        // Local segment collinear with point 1 of the parameter segment
+//        if localOrientation1 == .collinear && self.liesOnSegment(point: segment.p1) {
+//            return true
+//        }
+//        // Local segment collinear with point 2 of the parameter segment
+//        if localOrientation2 == .collinear && self.liesOnSegment(point: segment.p2) {
+//            return true
+//        }
+//        // Parameter segment collinear with point 1 of the local segment
+//        if segmentOrientation1 == .collinear && segment.liesOnSegment(point: self.p1) {
+//            return true
+//        }
+//        // Parameter segment collinear with point 2 of the local segment
+//        if segmentOrientation2 == .collinear && segment.liesOnSegment(point: self.p2) {
+//            return true
+//        }
+//        return false
+//    }
     
     var line: Line {
         return Line(point1: p1, point2: p2)
@@ -64,6 +97,15 @@ struct Segment {
             return false
         }
     }
+    
+//    Alternative implementation using determinants
+//    func liesOnSegment(point: Point) -> Bool {
+//        if collinear(pointA: self.p1, pointB: self.p2, pointC: point) {
+//            return pointInBox(point1: self.p1, point2: self.p2, target: point)
+//        } else {
+//            return false
+//        }
+//    }
     
 }
 
@@ -325,6 +367,10 @@ public extension Double {
     static func ====(lhs: Double, rhs: Double) -> Bool {
         return abs(lhs - rhs) < epsilon
     }
+    
+    static func !===(lhs: Double, rhs: Double) -> Bool {
+        return abs(lhs - rhs) > epsilon
+    }
 }
 
 // MARK: Some util methods
@@ -351,6 +397,30 @@ func ccw(pointA: Point, pointB: Point, pointC: Point) -> Bool {
 // Determines if the orientation of 3 ordered points are collinear
 func collinear(pointA: Point, pointB: Point, pointC: Point) -> Bool {
     return abs(Triangle.signedArea(pointA: pointA, pointB: pointB, pointC: pointC)) <= epsilon
+}
+
+enum PointOrientation: Int{
+    case collinear = 0
+    case cw = 1
+    case ccw = -1
+}
+
+/// Determines the orientation of the point C based in the segment A-B
+///
+/// - Parameters:
+///   - pointA: First point of the segment
+///   - pointB: Second point of the segment
+///   - pointC: Point to evaluate
+/// - Returns: Triangle orientation value
+func orientation(pointA: Point, pointB: Point, pointC: Point) -> PointOrientation {
+    let signedArea = Triangle.signedArea(pointA: pointA, pointB: pointB, pointC: pointC)
+    if signedArea ==== 0.0 {
+        return .collinear
+    } else if signedArea > 0.0 {
+        return .cw
+    } else {
+        return .ccw
+    }
 }
 
 
