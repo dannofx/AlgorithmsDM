@@ -10,6 +10,10 @@ import Foundation
 
 // Error range
 let epsilon = 0.00001
+// Operators to manage error range
+infix operator <<=: AdditionPrecedence
+infix operator >>=: AdditionPrecedence
+infix operator ====: AdditionPrecedence
 
 // MARK: Point structure
 
@@ -48,6 +52,19 @@ struct Segment {
         return pointInBox(point1: self.p1, point2: self.p2, target: intersection) &&
                pointInBox(point1: segment.p1, point2: segment.p2, target: intersection)
     }
+    
+    var line: Line {
+        return Line(point1: p1, point2: p2)
+    }
+    
+    func liesOnSegment(point: Point) -> Bool {
+        if self.line.liesOnLine(point: point) {
+            return pointInBox(point1: self.p1, point2: self.p2, target: point)
+        } else {
+            return false
+        }
+    }
+    
 }
 
 // MARK: Line structure
@@ -115,6 +132,17 @@ struct Line {
             result = self.findIntersection(line: line)!
         }
         return result
+    }
+    
+    func liesOnLine(point: Point) -> Bool {
+        if abs(self.b) <= epsilon {
+            return abs(point.x + self.c) < epsilon
+        } else if abs(self.a) <= epsilon {
+            return abs(point.y + self.c) < epsilon
+        } else {
+            let sum = self.a * point.x + self.b * point.y + self.c
+            return abs(sum) < epsilon
+        }
     }
 }
 
@@ -209,7 +237,7 @@ struct Polygon {
     }
 
     let points: [Point]
-    func triangleIsAnEar(indexP1: Int, indexP2: Int, indexP3: Int) -> Bool {
+    private func triangleIsAnEar(indexP1: Int, indexP2: Int, indexP3: Int) -> Bool {
         let triangle = Triangle(point1: self.points[indexP1],
                                 point2: self.points[indexP2],
                                 point3: self.points[indexP3])
@@ -275,14 +303,41 @@ struct Polygon {
     }
 }
 
+// MARK: Comparisons handling margin error
+
+public extension Double {
+    static func <<=(lhs: Double, rhs: Double) -> Bool {
+        if abs(lhs - rhs) < epsilon {
+            return true
+        } else {
+            return lhs < rhs
+        }
+    }
+    
+    static func >>=(lhs: Double, rhs: Double) -> Bool {
+        if abs(lhs - rhs) < epsilon {
+            return true
+        } else {
+            return lhs > rhs
+        }
+    }
+    
+    static func ====(lhs: Double, rhs: Double) -> Bool {
+        return abs(lhs - rhs) < epsilon
+    }
+}
+
 // MARK: Some util methods
 
 // Checks if a point is contained in the rectangle formed by another 2 points
 func pointInBox(point1: Point, point2: Point, target: Point) -> Bool {
     let (x1, x2) = point1.x > point2.x ? (point2.x, point1.x) : (point1.x, point2.x)
     let (y1, y2) = point1.y > point2.y ? (point2.y, point1.y) : (point1.y, point2.y)
-    return target.x >= x1 && target.x <= x2 && target.y >= y1 && target.y <= y2
+    return target.x >>= x1 && target.x <<= x2 && target.y >>= y1 && target.y <<= y2
 }
+
+//escribir operadores >>= y <<=, para tomar en cuenta el epsilon, serian un > y un < respectivamente,
+//pero antes checando si es igual por medio de abs(diff) < epsilon
 
 // Determines if the orientation of 3 ordered points is clockwise
 func cw(pointA: Point, pointB: Point, pointC: Point) -> Bool {
@@ -297,3 +352,8 @@ func ccw(pointA: Point, pointB: Point, pointC: Point) -> Bool {
 func collinear(pointA: Point, pointB: Point, pointC: Point) -> Bool {
     return abs(Triangle.signedArea(pointA: pointA, pointB: pointB, pointC: pointC)) <= epsilon
 }
+
+
+
+
+

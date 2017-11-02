@@ -14,13 +14,22 @@ extension Polygon {
             let rayEndPoint = Point(x: max(edgeP1.x, edgeP2.x) + 1.0, y: point.y)
             let ray = Segment(p1: point, p2: rayEndPoint)
             if edge.intersectsSegment(segment: ray) {
-                let line = Line(point1: edge.p1, point2: edge.p2)
-                let closestPoint = line.findClosestPoint(toPoint: point)
-                if closestPoint.isSamePoint(point) {
+                if edge.liesOnSegment(point: point) {
                     return true
                 }
-                if abs(edge.p1.y - point.y) < epsilon {
+                if edge.p1.y ==== point.y {
                     continue
+                }
+                if edge.p2.y ==== point.y {
+                    let nextEdgeP = self.points[(i + 2) % self.points.count]
+                    if edge.p2.y ==== edge.p1.y || edge.p2.y ==== nextEdgeP.y {
+                        continue
+                    }
+                    let diff1 = edge.p2.y - edge.p1.y
+                    let diff2 = edge.p2.y - nextEdgeP.y
+                    if diff1 * diff2 < 0.0 {
+                        continue
+                    }
                 }
                intersectionsNumber += 1
             }
@@ -86,4 +95,5 @@ points.append(Point(x: 0.0, y: 10.0))
 polygon = Polygon(points: points)
 targetPoint = Point(x: -1.0, y: 10.0)
 printIfPointInside(targetPoint, polygon: polygon)
+
 
