@@ -19,13 +19,12 @@ class BTreeNode<Element> where Element: Comparable {
     }
     
     func traverse() {
-        for (i, key) in keys.enumerated() {
-            if let key = key {
-                print("\(key) ")
-            }
+        for i in 0..<self.n {
+            let key = self.keys[i]!
             if !self.leaf {
                 self.children[i]?.traverse()
             }
+            print("\(key) ")
         }
         if !self.leaf {
             self.children[n]?.traverse()
@@ -37,7 +36,7 @@ class BTreeNode<Element> where Element: Comparable {
         while i < self.n && searchItem > self.keys[i]! {
             i += 1
         }
-        if self.keys[i]! == searchItem {
+        if let key = self.keys[i], key == searchItem {
             return self
         }
         if self.leaf {
@@ -79,11 +78,11 @@ class BTreeNode<Element> where Element: Comparable {
         let newNode = BTreeNode.init(t: oldNode.t, leaf: oldNode.leaf)
         newNode.n = self.t - 1
         for j in 0..<(self.t - 1) {
-            newNode.keys[j] = oldNode.keys[j]
+            newNode.keys[j] = oldNode.keys[j + t]
         }
         if !oldNode.leaf {
             for j in 0..<t {
-                newNode.children[j] = oldNode.children[j]
+                newNode.children[j] = oldNode.children[j + t]
             }
         }
         oldNode.n = t - 1
@@ -155,17 +154,16 @@ tree.insert(30)
 tree.insert(7)
 tree.insert(17)
 tree.traverse()
-print("==")
-//var k = 6
-//if tree.search(k) != nil {
-//    print("Item \(k) found!!")
-//} else {
-//    print("Item \(k) not found")
-//}
-//k = 15
-//if tree.search(k) != nil {
-//    print("Item \(k) found!!")
-//} else {
-//    print("Item \(k) not found")
-//}
+var k = 6
+if tree.search(k) != nil {
+    print("Item \(k) found!!")
+} else {
+    print("Item \(k) not found")
+}
+k = 15
+if tree.search(k) != nil {
+    print("Item \(k) found!!")
+} else {
+    print("Item \(k) not found")
+}
 
