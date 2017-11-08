@@ -3,98 +3,96 @@
 // MARK: BTree node class
 
 class BTreeNode<Element> where Element: Comparable {
-    var keys: [Element?]
-    var children: [BTreeNode?]
-    var n: Int // number of elements
-    var t: Int // degree
+    var keys: [Element]
+    var children: [BTreeNode]
+    var degree: Int
     var leaf: Bool
     
-    init(t: Int, leaf: Bool) {
-        self.t = t
+    init(degree: Int, leaf: Bool) {
+        self.degree = degree
         self.leaf = leaf
-        let size = 2 * self.t
-        self.keys = [Element?].init(repeating: nil, count: size - 1)
-        self.children = [BTreeNode?].init(repeating: nil, count: size)
-        self.n = 0
+        self.keys = [Element]()
+        self.children = [BTreeNode]()
     }
     
     func traverse() {
-        for i in 0..<self.n {
-            let key = self.keys[i]!
+        for (i, key) in self.keys.enumerated() {
             if !self.leaf {
-                self.children[i]?.traverse()
+                self.children[i].traverse()
             }
             print("\(key) ")
         }
         if !self.leaf {
-            self.children[n]?.traverse()
+            self.children[self.keys.count].traverse()
         }
     }
     
     func search(_ searchItem: Element) -> BTreeNode?{
         var i = 0
-        while i < self.n && searchItem > self.keys[i]! {
+        while i < self.keys.count && searchItem > self.keys[i] {
             i += 1
         }
-        if let key = self.keys[i], key == searchItem {
+        if i < self.keys.count && self.keys[i] == searchItem {
             return self
         }
         if self.leaf {
             return nil
         }
-        return children[i]?.search(searchItem)
+        return children[i].search(searchItem)
     }
     
     func insertNonFull(_ item: Element) {
-        var i = self.n - 1
         if self.leaf {
             // The node is leaf,
             // just look for the correct space for the insertion
-            while (i >= 0 && self.keys[i]! > item) {
-                self.keys[i + 1] = self.keys[i]
-                i -= 1
+            var insertionIndex = self.keys.count
+            for i in stride(from: self.keys.count - 1, through: 0, by: -1) {
+                if self.keys[i] < item{
+                    break
+                } else {
+                    insertionIndex = i
+                }
             }
-            self.keys[i + 1] = item
-            n += 1
+            self.keys.insert(item, at: insertionIndex)
         } else {
             // This node is no leaf
             // Look for the correct space
-            while i >= 0 && self.keys[i]! > item {
-                i -= 1
+            var insertionIndex = self.keys.count
+            for i in stride(from: self.keys.count - 1, through: 0, by: -1) {
+                if self.keys[i] < item{
+                    break
+                } else {
+                    insertionIndex = i
+                }
             }
             
             // Split the child if necessary
-            if let child = self.children[i + 1], child.n == (2 * t - 1) {
-                self.splitChild(i + 1, oldNode: child)
-                if self.keys[i + 1]! < item {
-                    i += 1
+            if self.children[insertionIndex].keys.count == (2 * self.degree - 1) {
+                self.splitChild(insertionIndex, oldNode: self.children[insertionIndex])
+                if self.keys[insertionIndex] < item {
+                    insertionIndex += 1
                 }
             }
-            self.children[i + 1]?.insertNonFull(item)
+            self.children[insertionIndex].insertNonFull(item)
         }
     }
     
     func splitChild(_ i: Int, oldNode: BTreeNode) {
-        let newNode = BTreeNode.init(t: oldNode.t, leaf: oldNode.leaf)
-        newNode.n = self.t - 1
-        for j in 0..<(self.t - 1) {
-            newNode.keys[j] = oldNode.keys[j + t]
+        let newNode = BTreeNode(degree: oldNode.degree, leaf: oldNode.leaf)
+        for j in 0..<(self.degree - 1) {
+            newNode.keys.append(oldNode.keys[j + self.degree])
         }
+        oldNode.keys.removeLast(self.degree - 1)
         if !oldNode.leaf {
-            for j in 0..<t {
-                newNode.children[j] = oldNode.children[j + t]
+            for j in 0..<degree {
+                newNode.children.append(oldNode.children[j + self.degree])
             }
+            oldNode.children.removeLast(self.degree)
         }
-        oldNode.n = t - 1
-        for j in stride(from: self.n, through: (i + 1), by: -1) {
-            self.children[j + 1] = self.children[j]
-        }
-        self.children[i + 1] = newNode
-        for j in stride(from: (n - 1), through: i, by: -1) {
-            self.keys[j + 1] = self.keys[j]
-        }
-        self.keys[i] = oldNode.keys[self.t - 1]
-        n = n + 1
+        let newKey = oldNode.keys[degree - 1]
+        oldNode.keys.removeLast()
+        self.keys.insert(newKey, at: i)
+        self.children.insert(newNode, at: (i + 1))
     }
 }
 
@@ -102,11 +100,11 @@ class BTreeNode<Element> where Element: Comparable {
 
 class BTree<Element> where Element: Comparable {
     var root: BTreeNode<Element>?
-    var t: Int // minimum degree
+    var degree: Int // minimum degree
     
-    init(t: Int) {
+    init(degree: Int) {
         self.root = nil
-        self.t = t
+        self.degree = degree
     }
     
     func traverse() {
@@ -119,32 +117,32 @@ class BTree<Element> where Element: Comparable {
     
     func insert(_ item: Element) {
         if let root = self.root {
-            let maxSize = 2 * t - 1
-            if root.n < maxSize {
+            let maxSize = 2 * self.degree - 1
+            if root.keys.count < maxSize {
                 // There is space for the insertion
                 root.insertNonFull(item)
             } else {
                 // No space, create new root
-                let newRoot = BTreeNode<Element>(t: self.t, leaf: false)
-                newRoot.children[0] = root
+                let newRoot = BTreeNode<Element>(degree: self.degree, leaf: false)
+                newRoot.children.append(root)
                 newRoot.splitChild(0, oldNode: root)
                 var i = 0
-                if newRoot.keys[0]! < item {
+                if newRoot.keys[0] < item {
                     i += 1
                 }
-                newRoot.children[i]?.insertNonFull(item)
+                newRoot.children[i].insertNonFull(item)
                 self.root = newRoot
             }
         } else {
             // There isn't any node, create the root and assign the item.
-            self.root = BTreeNode(t: self.t, leaf: true)
-            self.root?.keys[0] = item
-            self.root?.n = 1
+            let root = BTreeNode<Element>(degree: self.degree, leaf: true)
+            root.keys.append(item)
+            self.root = root
         }
     }
 }
 
-var tree = BTree<Int>(t: 3)
+var tree = BTree<Int>(degree: 3)
 tree.insert(10)
 tree.insert(20)
 tree.insert(5)
