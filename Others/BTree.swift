@@ -1,4 +1,5 @@
 // B-Tree
+import Foundation
 
 // MARK: BTree node class
 
@@ -92,7 +93,7 @@ class BTreeNode<Element> where Element: Comparable {
                 return
             }
             let lastNode = (removeIndex == self.keys.count) // Is in the last node?
-            // If the child has than 'degree' keys, then fill that child
+            // If the child has less than 'degree' keys, then fill that child
             if self.children[removeIndex].keys.count < self.degree {
                 self.fill(removeIndex)
             }
@@ -167,29 +168,97 @@ private extension BTreeNode {
     }
     
     func getPredecesor(keyIndex: Int) -> Element {
-        //TODO: Implementation
-        return 1 as! Element
+        var node = self.children[keyIndex]
+        while !node.leaf {
+            node = node.children[node.keys.count]
+        }
+        return node.keys[node.keys.count - 1]
     }
     
     func getSuccessor(keyIndex: Int) -> Element {
-        //TODO: Implementation
-        return 1 as! Element
+        var node = self.children[keyIndex + 1]
+        while !node.leaf {
+            node = node.children[0]
+        }
+        return node.keys[0]
     }
     
     func fill(_ index: Int) {
-        //TODO: Implementation
+        if index != 0 && self.children[index - 1].keys.count >= self.degree {
+            // If the previous child has more than 'degree' - 1 keys, then borrow
+            // a key.
+            self.borrowFromPreviousChild(childIndex: index)
+        } else if index != self.keys.count && self.children[index + 1].keys.count >= self.degree {
+            // If the next child has more than 'degree' - 1 keys, then borrow
+            // a key.
+            self.borrowFromNextChild(childIndex: index)
+        } else {
+            // Merge the current node with its sibling.
+            // If the current node is the last child, merge with the previous child
+            // Otherwise merge with the next
+            if index != self.keys.count {
+                mergeWithNextChild(childIndex: index)
+            } else {
+                mergeWithNextChild(childIndex: index - 1)
+            }
+        }
     }
     
     func borrowFromNextChild(childIndex: Int) {
-        //TODO: Implementation
+        let child = self.children[childIndex]
+        let sibling = self.children[childIndex + 1]
+        // the current key is inserted at the end of the current child
+        child.keys.append(self.keys[childIndex])
+        if (!child.leaf) {
+            // Sibling's first child is inserted as the las child of
+            // the current child
+            child.children.append(sibling.children[0])
+        }
+        // The first key from sibling is replaced by the current key
+        self.keys[childIndex] = sibling.keys[0]
+        // Remove the borrowed elements from sibling
+        sibling.keys.removeFirst()
+        if (!child.leaf) {
+            sibling.children.removeFirst()
+        }
     }
     
     func borrowFromPreviousChild(childIndex: Int) {
-        //TODO: Implementation
+        let child = self.children[childIndex]
+        let sibling = self.children[childIndex - 1]
+        // Setting first key of the current child with
+        // the previous key
+        child.keys.insert(self.keys[childIndex - 1], at: 0)
+        if !child.leaf {
+            // Setting first child of the current child with
+            // the last child of the sibling
+            child.children.insert(sibling.children.last!, at: 0)
+        }
+        // Replacing the borrowed key with the last key of the sibling
+        self.keys[childIndex - 1] = sibling.keys.last!
+        // Remove the borrowed elements from sibling
+        sibling.keys.removeLast()
+        if !child.leaf {
+            sibling.children.removeLast()
+        }
     }
     
     func mergeWithNextChild(childIndex: Int) {
-        //TODO: Implementation
+        let child = self.children[childIndex]
+        let sibling = self.children[childIndex + 1]
+        // Adding the next key to the keys of the current child
+        child.keys.append(self.keys[childIndex])
+        //Copyng keys of the sibling at the end
+        child.keys.append(contentsOf: sibling.keys)
+        if !child.leaf {
+            //Adding children of the sibling at the end
+            child.children.append(contentsOf: sibling.children)
+        }
+        // Remove the moved key
+        self.keys.remove(at: childIndex)
+        // Remove the sibling from the children
+        self.children.remove(at: childIndex + 1)
+        
     }
 }
 
@@ -203,7 +272,7 @@ class BTree<Element> where Element: Comparable {
         self.root = nil
         self.degree = degree
     }
-    
+
     func traverse() {
         root?.traverse()
     }
@@ -254,26 +323,89 @@ class BTree<Element> where Element: Comparable {
     }
 }
 
-var tree = BTree<Int>(degree: 3)
-tree.insert(10)
-tree.insert(20)
-tree.insert(5)
-tree.insert(6)
-tree.insert(12)
-tree.insert(30)
-tree.insert(7)
-tree.insert(17)
-tree.traverse()
-var k = 6
-if tree.search(k) != nil {
-    print("Item \(k) found!!")
-} else {
-    print("Item \(k) not found")
-}
-k = 15
-if tree.search(k) != nil {
-    print("Item \(k) found!!")
-} else {
-    print("Item \(k) not found")
-}
+//// Insert test
+//
+//var tree = BTree<Int>(degree: 3)
+//tree.insert(10)
+//tree.insert(20)
+//tree.insert(5)
+//tree.insert(6)
+//tree.insert(12)
+//tree.insert(30)
+//tree.insert(7)
+//tree.insert(17)
+//tree.traverse()
 
+//// Search test
+//
+//var k = 6
+//if tree.search(k) != nil {
+//    print("Item \(k) found!!")
+//} else {
+//    print("Item \(k) not found")
+//}
+//k = 15
+//if tree.search(k) != nil {
+//    print("Item \(k) found!!")
+//} else {
+//    print("Item \(k) not found")
+//}
+
+// Delete test
+
+//var tree = BTree<Int>(degree: 3)
+//tree.insert(1)
+//tree.insert(3)
+//tree.insert(7)
+//tree.insert(10)
+//tree.insert(11)
+//tree.insert(13)
+//tree.insert(14)
+//tree.insert(15)
+//tree.insert(18)
+//tree.insert(16)
+//tree.insert(19)
+//tree.insert(24)
+//tree.insert(25)
+//tree.insert(26)
+//tree.insert(21)
+//tree.insert(4)
+//tree.insert(5)
+//tree.insert(20)
+//tree.insert(22)
+//tree.insert(2)
+//tree.insert(17)
+//tree.insert(12)
+//tree.insert(6)
+//print("Traversal of the constructed tree")
+//tree.traverse()
+//// removing 6
+//var removeItem = 6
+//tree.remove(removeItem)
+//print("Traversal of the constructed tree after removing \(removeItem)")
+//tree.traverse()
+//// removing 13
+//removeItem = 13
+//tree.remove(removeItem)
+//print("Traversal of the constructed tree after removing \(removeItem)")
+//tree.traverse()
+//// removing 7
+//removeItem = 7
+//tree.remove(removeItem)
+//print("Traversal of the constructed tree after removing \(removeItem)")
+//tree.traverse()
+//// removing 4
+//removeItem = 4
+//tree.remove(removeItem)
+//print("Traversal of the constructed tree after removing \(removeItem)")
+//tree.traverse()
+//// removing 2
+//removeItem = 2
+//tree.remove(removeItem)
+//print("Traversal of the constructed tree after removing \(removeItem)")
+//tree.traverse()
+//// removing 16
+//removeItem = 16
+//tree.remove(removeItem)
+//print("Traversal of the constructed tree after removing \(removeItem)")
+//tree.traverse()
