@@ -27,7 +27,7 @@ struct Point {
     }
     
     func isSamePoint(_ point: Point) -> Bool {
-        return abs(self.x - point.x) < epsilon && abs(self.y - point.y) < epsilon 
+        return self.x ==== point.x && self.y ==== point.y
     }
 }
 
