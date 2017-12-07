@@ -1,5 +1,5 @@
 //
-//  Line.swift
+//  GeometricShapes.swift
 //  Geometry
 //
 //  Created by Danno on 10/19/17.
@@ -18,6 +18,7 @@ infix operator !===: AdditionPrecedence
 
 // MARK: Point structure
 
+// MARK: Point structure
 struct Point {
     var x: Double
     var y: Double
@@ -38,53 +39,53 @@ struct Segment {
     func intersectsSegment(segment: Segment) -> Bool {
         let line1 = Line(point1: self.p1, point2: self.p2)
         let line2 = Line(point1: segment.p1, point2: segment.p2)
-        if line1.isSameLine(line2) {
+        if line1.isSameLine(line: line2) {
             return pointInBox(point1: self.p1, point2: self.p2, target: segment.p1) ||
                 pointInBox(point1: self.p1, point2: self.p2, target: segment.p2) ||
                 pointInBox(point1: segment.p1, point2: segment.p2, target: self.p1) ||
                 pointInBox(point1: segment.p1, point2: segment.p2, target: self.p2)
         }
-
+        
         if line1.isParallel(line: line2) {
             return  false
         }
-
+        
         let intersection = line1.findIntersection(line: line2)!
         return pointInBox(point1: self.p1, point2: self.p2, target: intersection) &&
             pointInBox(point1: segment.p1, point2: segment.p2, target: intersection)
     }
     
-//    Alternative implementation using determinants
-//    func intersectsSegment(segment: Segment) -> Bool {
-//        let localOrientation1 = orientation(pointA: self.p1, pointB: self.p2, pointC: segment.p1)
-//        let localOrientation2 = orientation(pointA: self.p1, pointB: self.p2, pointC: segment.p2)
-//        let segmentOrientation1 = orientation(pointA: segment.p1, pointB: segment.p2, pointC: self.p1)
-//        let segmentOrientation2 = orientation(pointA: segment.p1, pointB: segment.p2, pointC: self.p2)
-//
-//        // General situation
-//        if (localOrientation1 != localOrientation2 &&
-//            segmentOrientation1 != segmentOrientation2) {
-//            return true
-//        }
-//        //Special cases for collinear segments
-//        // Local segment collinear with point 1 of the parameter segment
-//        if localOrientation1 == .collinear && self.liesOnSegment(point: segment.p1) {
-//            return true
-//        }
-//        // Local segment collinear with point 2 of the parameter segment
-//        if localOrientation2 == .collinear && self.liesOnSegment(point: segment.p2) {
-//            return true
-//        }
-//        // Parameter segment collinear with point 1 of the local segment
-//        if segmentOrientation1 == .collinear && segment.liesOnSegment(point: self.p1) {
-//            return true
-//        }
-//        // Parameter segment collinear with point 2 of the local segment
-//        if segmentOrientation2 == .collinear && segment.liesOnSegment(point: self.p2) {
-//            return true
-//        }
-//        return false
-//    }
+    //    Alternative implementation using determinants
+    //    func intersectsSegment(segment: Segment) -> Bool {
+    //        let localOrientation1 = orientation(pointA: self.p1, pointB: self.p2, pointC: segment.p1)
+    //        let localOrientation2 = orientation(pointA: self.p1, pointB: self.p2, pointC: segment.p2)
+    //        let segmentOrientation1 = orientation(pointA: segment.p1, pointB: segment.p2, pointC: self.p1)
+    //        let segmentOrientation2 = orientation(pointA: segment.p1, pointB: segment.p2, pointC: self.p2)
+    //
+    //        // General situation
+    //        if (localOrientation1 != localOrientation2 &&
+    //            segmentOrientation1 != segmentOrientation2) {
+    //            return true
+    //        }
+    //        //Special cases for collinear segments
+    //        // Local segment collinear with point 1 of the parameter segment
+    //        if localOrientation1 == .collinear && self.liesOnSegment(point: segment.p1) {
+    //            return true
+    //        }
+    //        // Local segment collinear with point 2 of the parameter segment
+    //        if localOrientation2 == .collinear && self.liesOnSegment(point: segment.p2) {
+    //            return true
+    //        }
+    //        // Parameter segment collinear with point 1 of the local segment
+    //        if segmentOrientation1 == .collinear && segment.liesOnSegment(point: self.p1) {
+    //            return true
+    //        }
+    //        // Parameter segment collinear with point 2 of the local segment
+    //        if segmentOrientation2 == .collinear && segment.liesOnSegment(point: self.p2) {
+    //            return true
+    //        }
+    //        return false
+    //    }
     
     var line: Line {
         return Line(point1: p1, point2: p2)
@@ -98,14 +99,14 @@ struct Segment {
         }
     }
     
-//    Alternative implementation using determinants
-//    func liesOnSegment(point: Point) -> Bool {
-//        if collinear(pointA: self.p1, pointB: self.p2, pointC: point) {
-//            return pointInBox(point1: self.p1, point2: self.p2, target: point)
-//        } else {
-//            return false
-//        }
-//    }
+    //    Alternative implementation using determinants
+    //    func liesOnSegment(point: Point) -> Bool {
+    //        if collinear(pointA: self.p1, pointB: self.p2, pointC: point) {
+    //            return pointInBox(point1: self.p1, point2: self.p2, target: point)
+    //        } else {
+    //            return false
+    //        }
+    //    }
     
 }
 
@@ -116,34 +117,74 @@ struct Line {
     var b: Double // Y coefficcient
     var c: Double // Constant term
     
-    init(point1: Point, point2: Point) {
-        if point1.x == point2.x {
-            self.a = 1
-            self.b = 0
-            self.c = -point1.x
-        } else {
-            self.b = 1
-            self.a = -(point1.y - point2.y) / (point1.x - point2.x)
-            self.c = -(self.a * point1.x) - (self.b * point1.y)
+    private init(a: Double, b: Double, c: Double) {
+        self.a = a
+        self.b = b
+        self.c = c
+        if self.a ==== self.b && self.b ==== self.c && self.c ==== 0.0 {
+            print("""
+                  Warning: All the factors in the general equation are 0.0
+                  This may be due to that the points used to initialize the line
+                  were the same. The line will be initialize but multiple errors
+                  could appear.
+                  """)
         }
     }
     
+    init(point1: Point, point2: Point) {
+        let vx = point2.x - point1.x
+        let vy = point2.y - point1.y
+        let a = vy
+        let b = vx * -1
+        let c = point1.y * vx  - point1.x * vy
+        self.init(a: a, b: b, c: c)
+    }
+    
     init(slope: Double, point: Point) {
-        self.a = -slope
-        self.b = 1
-        self.c = -(self.a * point.x) - (self.b * point.x)
+        // From m = (y2 - y1) / (x2 - x1)
+        // we deduce the following values.
+        self.a = slope
+        self.b = -1
+        self.c = -1 * slope * point.x + point.y
+    }
+    
+    func getPerpendicularLine(toPoint point: Point) -> Line{
+        // General equation of perpendicular line
+        // -Bx + Ay + k = 0
+        // k = Bx -Ay
+        let pA = self.b * -1
+        let pB = self.a
+        let pC = self.b * point.x - self.a * point.y
+        return Line(a: pA, b: pB, c: pC)
     }
     
     func isParallel(line: Line) -> Bool {
-        return abs(self.a - line.a) <= epsilon && abs(self.b - line.b) <= epsilon
+        if line.a ==== 0.0 {
+            return self.a ==== 0.0
+        }
+        if line.b ==== 0.0 {
+            return self.b ==== 0.0
+        }
+        let proportionA = self.a / line.a
+        let proportionB = self.b / line.b
+        return proportionA ==== proportionB
     }
     
-    func isSameLine(_ line: Line) -> Bool {
-        return self.isParallel(line: line) && abs(self.c - line.c) <= epsilon
+    func isSameLine(line: Line) -> Bool {
+        if !self.isParallel(line: line) {
+            return false
+        }
+        if line.c ==== 0.0 {
+            return self.c ==== 0.0
+        } else {
+            let proportionB = self.b / line.b
+            let proportionC = self.c / line.c
+            return proportionB ==== proportionC
+        }
     }
     
     func findIntersection(line: Line) -> Point? {
-        if self.isSameLine(line) {
+        if self.isSameLine(line: line) {
             print("Warning: Identical lines, all points intersect.")
             return Point(x: 0.0, y: 0.0)
         }
@@ -151,40 +192,18 @@ struct Line {
             print("Error: Distinct parallel lines do not intersect.")
             return nil
         }
-        let x: Double = (line.b * self.c - self.b * line.c) / (line.a * self.b - self.a * line.b)
-        var y: Double!
-        if abs(self.b) > epsilon {
-            y = -(self.a * x + self.c) / self.b
-        } else {
-            y = -(line.a * x + line.c) / line.b
-        }
+        let x = (self.b * line.c - line.b * self.c ) / ( line.b * self.a - self.b * line.a )
+        let y = (self.a * line.c - line.a * self.c ) / ( line.a * self.b - self.a * line.b )
         return Point(x: x, y: y)
     }
     
     func findClosestPoint(toPoint point: Point) -> Point {
-        var result = Point(x:0.0, y:0.0)
-        if abs(self.b) <= epsilon {
-            result.x = -self.c
-            result.y = point.y
-        } else if abs(self.a) <= epsilon {
-            result.y = -self.c
-            result.x = point.x
-        } else {
-            let line = Line(slope: (1.0 / self.a), point: point)
-            result = self.findIntersection(line: line)!
-        }
-        return result
+        return self.findIntersection(line: self.getPerpendicularLine(toPoint: point))!
     }
     
     func liesOnLine(point: Point) -> Bool {
-        if abs(self.b) <= epsilon {
-            return abs(point.x + self.c) < epsilon
-        } else if abs(self.a) <= epsilon {
-            return abs(point.y + self.c) < epsilon
-        } else {
-            let sum = self.a * point.x + self.b * point.y + self.c
-            return abs(sum) < epsilon
-        }
+        let sum = self.a * point.x + self.b * point.y + self.c
+        return sum ==== 0.0
     }
 }
 
@@ -199,7 +218,7 @@ struct Circle {
         let closestPoint = line.findClosestPoint(toPoint: self.center)
         let inBox = pointInBox(point1: p1, point2: p2, target: closestPoint)
         if inBox {
-             return closestPoint.distance(to: self.center)
+            return closestPoint.distance(to: self.center)
         } else {
             return nil
         }
@@ -210,7 +229,7 @@ struct Circle {
             return distance < self.radius
         } else {
             return false
-        }        
+        }
     }
 }
 
@@ -277,7 +296,7 @@ struct Polygon {
     enum PolygonError: Error {
         case triangulationConversion(String)
     }
-
+    
     let points: [Point]
     private func triangleIsAnEar(indexP1: Int, indexP2: Int, indexP3: Int) -> Bool {
         let triangle = Triangle(point1: self.points[indexP1],
@@ -307,7 +326,7 @@ struct Polygon {
             let r = ( i + 1 + self.points.count ) % self.points.count
             rightIndices[i] = r
         }
-
+        
         var i = self.points.count - 1
         while trianglesVertices.count != (self.points.count - 2) {
             i = rightIndices[i]
@@ -422,8 +441,3 @@ func orientation(pointA: Point, pointB: Point, pointC: Point) -> PointOrientatio
         return .ccw
     }
 }
-
-
-
-
-

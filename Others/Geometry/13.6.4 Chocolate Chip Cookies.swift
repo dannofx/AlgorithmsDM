@@ -32,12 +32,7 @@ func countChips(center: Point, chocoChips: [Point], cookieRadio: Double) -> Int 
 func getCircumferencesCenters(point1: Point, point2: Point, radio: Double) -> (c1: Point, c2: Point) {
     let line = Line(point1: point1, point2: point2)
     let bisecCenter = getCenter(point1: point1, point2: point2)
-    let bisecLine: Line!
-    if abs(line.a) <= epsilon {
-        bisecLine = Line(point1: bisecCenter, point2: bisecCenter)
-    } else {
-        bisecLine = Line(slope: (line.b / line.a), point: bisecCenter)
-    }
+    let bisecLine = line.getPerpendicularLine(toPoint: bisecCenter)
     let module = sqrt(pow(bisecLine.a, 2.0) + pow(bisecLine.b, 2.0))
     let unitX = -1 * bisecLine.b / module
     let unitY = bisecLine.a / module
@@ -90,7 +85,3 @@ chocoChips.append(Point(x: 1.0, y: 25.0))
 chocoChips.append(Point(x: 1.0, y: 26.0))
 let maxChips = getMaxChipsNumber(chocoChips, cookieDiamenter: cookieDiameter)
 print("The maximum number of chips for a cookie is: \(maxChips)")
-
-
-
-
