@@ -16,8 +16,6 @@ func isPalindromePermutation(text: String) -> Bool{
         odds = odds ^ mask
     }
     let comprobation: Int32 = odds - 1
-    print("Comprobation \(String(comprobation, radix: 2))")
-    print("Odds \(String(odds, radix: 2))")
     return comprobation & odds == 0
 }
 
