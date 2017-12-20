@@ -1,4 +1,5 @@
-// List of Depths
+// Check Balanced
+
 import Foundation
 
 public extension Array where Element: Comparable {
@@ -71,62 +72,74 @@ extension TreeNode {
     }
 }
 
-// MARK: List of depths
+// MARK: Check Balanced
+
 extension TreeNode {
     
-    class ListNode<Element> {
-        let value: Element
-        var next: ListNode?
-        
-        init(value: Element) {
-            self.value = value
-        }
-        
-        func toString() -> String {
-            var res = "\(self.value)"
-            if let next = self.next {
-                res.append("->")
-                res.append(next.toString())
+    // Breadth first search solution
+//    var isBalanced: Bool {
+//        var pending = [self]
+//        var lastLevel = false
+//        while pending.count != 0 {
+//            var children = [TreeNode<Element>]()
+//            for node in pending {
+//                if let left = node.left {
+//                    if lastLevel {
+//                        return false
+//                    }
+//                    children.append(left)
+//                }
+//                if let right = node.right {
+//                    if lastLevel {
+//                        return false
+//                    }
+//                    children.append(right)
+//                }
+//            }
+//            if pending.count * 2 != children.count {
+//                lastLevel = true
+//            }
+//            pending = children
+//        }
+//        return true
+//    }
+    
+    private var balancedHeight: Int {
+        var leftHeight = 0
+        var rightHeight = 0
+        if let left = self.left {
+            leftHeight = left.balancedHeight
+            if leftHeight == -1 {
+                return -1
             }
-            return res
         }
-        
+        if let right = self.right {
+            rightHeight = right.balancedHeight
+            if rightHeight == -1 {
+                return -1
+            }
+        }
+        if leftHeight == -1 || rightHeight == -1 {
+            return -1
+        }
+        if abs(leftHeight - rightHeight) > 1 {
+            return -1
+        } else {
+            return max(leftHeight, rightHeight) + 1
+        }
     }
-
-    func createListsOfDepths() -> [ListNode<Element>] {
-        var pending = [self]
-        var results = [ListNode<Element>]()
-        while pending.count != 0 {
-            var head: ListNode<Element>? = nil
-            var tail: ListNode<Element>? = nil
-            var children = [TreeNode<Element>]()
-            for i in 0..<pending.count {
-                let node = ListNode(value: pending[i].value)
-                if head == nil {
-                    head = node
-                }
-                tail?.next = node
-                tail = node
-                if let left = pending[i].left {
-                    children.append(left)
-                }
-                if let right = pending[i].right {
-                    children.append(right)
-                }
-            }
-            pending = children
-            results.append(head!)
-        }
-        return results
+    
+    var isBalanced: Bool {
+        return self.balancedHeight != -1
     }
 }
 
 
-let elements = [9,6,5,4,3,2,1,4,5,6,7,8,5,4,5,8,9,7,5,3,1,0]
+
+let elements = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14]
 let tree = TreeNode<Int>.createSearchTree(elements: elements)!
-let depthsLists = tree.createListsOfDepths()
-for list in depthsLists {
-    print("\(list.toString())")
-}
+tree.right!.right = nil
+
+print("Tree is balanced: \(tree.isBalanced)")
 
 

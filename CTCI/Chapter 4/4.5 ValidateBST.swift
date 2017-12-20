@@ -1,4 +1,5 @@
-// List of Depths
+// Validate BST
+
 import Foundation
 
 public extension Array where Element: Comparable {
@@ -16,7 +17,7 @@ public extension Array where Element: Comparable {
 }
 
 class TreeNode<Element: Comparable> {
-    let value: Element
+    var value: Element
     var left: TreeNode?
     var right: TreeNode?
     
@@ -71,62 +72,30 @@ extension TreeNode {
     }
 }
 
-// MARK: List of depths
+// MARK: Check BST
+
 extension TreeNode {
     
-    class ListNode<Element> {
-        let value: Element
-        var next: ListNode?
-        
-        init(value: Element) {
-            self.value = value
-        }
-        
-        func toString() -> String {
-            var res = "\(self.value)"
-            if let next = self.next {
-                res.append("->")
-                res.append(next.toString())
+    var isBST: Bool {
+        if let left = self.left {
+            if left.value > self.value {
+                return false
             }
-            return res
         }
-        
-    }
-
-    func createListsOfDepths() -> [ListNode<Element>] {
-        var pending = [self]
-        var results = [ListNode<Element>]()
-        while pending.count != 0 {
-            var head: ListNode<Element>? = nil
-            var tail: ListNode<Element>? = nil
-            var children = [TreeNode<Element>]()
-            for i in 0..<pending.count {
-                let node = ListNode(value: pending[i].value)
-                if head == nil {
-                    head = node
-                }
-                tail?.next = node
-                tail = node
-                if let left = pending[i].left {
-                    children.append(left)
-                }
-                if let right = pending[i].right {
-                    children.append(right)
-                }
+        if let right = self.right {
+            if right.value <= self.value {
+                return false
             }
-            pending = children
-            results.append(head!)
         }
-        return results
+        return ( self.left?.isBST ?? true ) && ( self.right?.isBST ?? true )
     }
 }
 
 
-let elements = [9,6,5,4,3,2,1,4,5,6,7,8,5,4,5,8,9,7,5,3,1,0]
+
+var elements = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14]
 let tree = TreeNode<Int>.createSearchTree(elements: elements)!
-let depthsLists = tree.createListsOfDepths()
-for list in depthsLists {
-    print("\(list.toString())")
-}
+tree.left!.left!.value = 2
+print("Is binary search tree? \(tree.isBST)")
 
 
