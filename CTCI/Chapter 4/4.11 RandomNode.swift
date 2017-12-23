@@ -3,7 +3,7 @@
 import Foundation
 
 class TreeNode<Element: Comparable> {
-    let value: Element
+    private(set) var value: Element
     private var left: TreeNode?
     private var right: TreeNode?
     private(set) var size: Int
@@ -29,6 +29,73 @@ class TreeNode<Element: Comparable> {
             }
         }
         size += 1
+    }
+    
+    private var biggestLeaf: TreeNode {
+        if let right = self.right {
+            return right.biggestLeaf
+        } else {
+            return self
+        }
+    }
+    
+    private var smallestLeaf: TreeNode {
+        if let left = self.left {
+            return left.smallestLeaf
+        } else {
+            return self
+        }
+    }
+    
+    private func deleteChild(_ value: Element) -> TreeNode?{
+        var deletedResult: (deleted: TreeNode?, replacement: TreeNode?) = (nil, nil)
+        if let left = self.left {
+            deletedResult = left.delete(value)
+            if let deletedNode = deletedResult.deleted {
+                if self.left === deletedNode {
+                    self.left = deletedResult.replacement
+                }
+            }
+        }
+        
+        if let right = self.right, deletedResult.deleted == nil {
+            deletedResult = right.delete(value)
+            if let deletedNode = deletedResult.deleted {
+                if self.right === deletedNode {
+                    self.right = deletedResult.replacement
+                }
+            }
+        }
+        if deletedResult.deleted != nil {
+            self.size -= 1
+            return deletedResult.deleted
+        } else {
+            return nil
+        }
+    }
+    
+    func delete(_ value: Element) -> (deleted: TreeNode?, replacement: TreeNode?) {
+        if value == self.value {
+            self.size -= 1
+            if self.right == nil && self.left == nil {
+                return (self, nil)
+            } else if let right = self.right, self.left == nil {
+                return (self, right)
+            } else if let left = self.left, self.right == nil {
+                return (self, left)
+            } else {
+                let left = self.left!
+                let right = self.right!
+                if right.left == nil {
+                    right.left = left
+                    return (self, right)
+                }
+                left.biggestLeaf.right = right
+                return (self, left)
+                
+            }
+        }
+        return (self.deleteChild(value), nil)
     }
     
     func find(_ value: Element) -> TreeNode? {
@@ -91,13 +158,4 @@ tree.insert(55)
 tree.insert(70)
 tree.insert(80)
 print("Random node: \(tree.getRandomNode().value)")
-
-
-
-
-
-
-
-
-
 
