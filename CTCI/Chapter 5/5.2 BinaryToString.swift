@@ -7,11 +7,15 @@ infix operator >>>> : BitwiseShiftPrecedence
 extension Int {
 
     var binaryString: String {
-        let mask = 0b1 << (Int.bitWidth - 1)
+        return convertToBinaryString(size: Int.bitWidth)
+    }
+    
+    func convertToBinaryString(size: Int) -> String {
+        let mask = 0b1 << (size - 1)
         let signBit = ( mask & self ) != 0 ? "1" : "0"
         let number = ~mask & self
         let binaryForm = String(number, radix: 2)
-        return signBit + String(repeatElement("0", count: Int.bitWidth - binaryForm.count - 1)) + binaryForm
+        return signBit + String(repeatElement("0", count: size - binaryForm.count - 1)) + binaryForm
     }
 
     static func >>>> (lhs: Int, rhs: Int) -> Int {
@@ -40,8 +44,7 @@ func printFraction(number: Double) {
             remaining -= 1.0
         }
     }
-    print("." + String(result, radix: 2))
+    print("." + result.convertToBinaryString(size: size))
 }
-
 
 printFraction(number: 0.375)
