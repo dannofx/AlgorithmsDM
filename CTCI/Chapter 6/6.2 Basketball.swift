@@ -30,8 +30,8 @@ func calculateBetterGame(shotOdds: Double) -> Game{
     // This also can be expressed as:
     // 0 < -2*p^2 + 3p - 1
     // We can solve the equation to get the range
-    // where the the result is superior a 0
-    // And it would be 0.5 and 1.0.
+    // where the the result is superior to 0
+    // And it will be 0.5 and 1.0 for the values of p.
     // So, any probability between 0.5 and 1.0 (non inclusive)
     // will give us a better chance with the second game
     return 0.5 < shotOdds && shotOdds < 1.0 ? .twoOfThreeShots : .onlyOneShot
