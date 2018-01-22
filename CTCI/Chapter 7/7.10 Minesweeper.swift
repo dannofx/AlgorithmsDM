@@ -93,10 +93,10 @@ class Board {
     
     private func setNumbersForCells() {
         let deltas = [
-                        (-1, -1), (0, -1), (1, -1),
-                        (-1, 0 ),          (1, 0 ),
-                        (-1, 1 ), (0, 1 ), (1, 1 )
-                     ]
+            (-1, -1), (0, -1), (1, -1),
+            (-1, 0 ),          (1, 0 ),
+            (-1, 1 ), (0, 1 ), (1, 1 )
+        ]
         for bombCell in bombs {
             for delta in deltas {
                 let dRow = bombCell.row + delta.0
@@ -143,7 +143,7 @@ class Board {
                 let dColumn = cellToCheck.column + delta.1
                 if self.inBounds(row: dRow, column: dColumn) {
                     let cell = self.cells[dRow][dColumn]
-                    if cell.isBlank && cell.flip() {
+                    if cell.flip() && cell.isBlank {
                         cellsToCheck.append(cell)
                     }
                 }
