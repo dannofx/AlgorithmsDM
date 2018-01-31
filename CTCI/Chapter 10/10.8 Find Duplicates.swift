@@ -1,5 +1,4 @@
 // Find Duplicates
-
 import Foundation
 
 let maxValue = UInt.bitWidth // The max value that can have a number (substract 1 to include 0)
@@ -26,23 +25,11 @@ func printDuplicates(numbers: [Int]) {
         let container = bitVector[containerIndex]
         let bitIndex = number % UInt.bitWidth
         let mask: UInt = 1 << bitIndex
-        if container & mask == 1 {
+        if container & mask != 0 {
             print("\(number)")
         } else {
             bitVector[containerIndex] = container | mask
         }
-    }
-    
-    for number in numbers {
-        let containerIndex = number / UInt.bitWidth
-        let container = bitVector[containerIndex]
-        let bitIndex = number % UInt.bitWidth
-        let mask: UInt = (1 << bitIndex)
-        if container & mask == 0 {
-            let number = containerIndex * UInt.bitWidth + bitIndex
-            print("Duplicated: \(number)")
-        }
-        bitVector[containerIndex] = container & ~mask
     }
 }
 
