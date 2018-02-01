@@ -68,8 +68,9 @@ class TreeNode<Element> where Element: Comparable, Element: Summable {
     
     private func countPathsWithSum(targetSum: Element, sums: inout [Element: Int], previousSum: Element) -> Int{
         let currentSum = previousSum + self.value
-        let neededSum  = currentSum - targetSum
-        var totalPaths = sums[neededSum] ?? 0
+        let neededSum  = currentSum - targetSum // If the sum exceeded the target, this value is the exceeded amount
+        var totalPaths = sums[neededSum] ?? 0 // If there are previous sums with the exceeded value, every sum could
+                                              // be substracted and could be a way to hit the target in this iteration
         if currentSum == targetSum {
             totalPaths += 1
         }
@@ -85,9 +86,6 @@ class TreeNode<Element> where Element: Comparable, Element: Summable {
         return totalPaths
     }
     
-    func jode(sums: inout [Element: Int]) -> Int {
-        return 0
-    }
     func countPathsWithSum(_ sum: Element) -> Int{
         var sumsDict = [Element: Int]()
         return self.countPathsWithSum(targetSum: sum, sums: &sumsDict, previousSum: 0 as! Element)
