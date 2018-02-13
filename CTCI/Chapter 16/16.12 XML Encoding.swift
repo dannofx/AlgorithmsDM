@@ -20,10 +20,12 @@ class TagMap {
             return self.textTagMap[key]
         }
         set(newValue) {
-            self.textTagMap[key] = newValue
             if let newValue = newValue {
                 self.intTagMap[newValue] = key
+            } else if let oldValue = self.textTagMap[key] {
+                self.intTagMap[oldValue] = nil
             }
+            self.textTagMap[key] = newValue
         }
     }
     
@@ -32,10 +34,12 @@ class TagMap {
             return self.intTagMap[key]
         }
         set(newValue) {
-            self.intTagMap[key] = newValue
             if let newValue = newValue{
                 self.textTagMap[newValue] = key
+            } else if let oldValue = self.intTagMap[key] {
+                self.textTagMap[oldValue] = nil
             }
+            self.intTagMap[key] = newValue
         }
     }
 }
