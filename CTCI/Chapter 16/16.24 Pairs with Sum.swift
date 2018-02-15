@@ -2,20 +2,18 @@
 
 import Foundation
 
-// MARK: Hash Set solution
+// MARK: Hash table solution
 
 //func findSumPairs(sum: Int, numbers: [Int]) -> [(Int, Int)] {
 //    var pairs = [(Int, Int)]()
-//    var numbersSet = Set<Int>(numbers)
+//    var unpairedNumbers = [Int: Int]() // The value ontains the number of repetitions
 //    for number in numbers {
-//        if !numbersSet.contains(number) {
-//            continue
-//        }
-//        let neededNumber = sum - number
-//        if numbersSet.contains(neededNumber) {
-//            pairs.append((number, neededNumber))
-//            numbersSet.remove(neededNumber)
-//            numbersSet.remove(number)
+//        let complement = sum - number
+//        if let complCount = unpairedNumbers[complement], complCount > 0 {
+//            pairs.append((number, complement))
+//            unpairedNumbers[number] = complCount - 1
+//        } else {
+//            unpairedNumbers[number] = (unpairedNumbers[number] ?? 0) + 1
 //        }
 //    }
 //    return pairs
