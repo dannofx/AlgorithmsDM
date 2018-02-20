@@ -8,23 +8,43 @@ func swap(_ number1: inout Int, _ number2: inout Int) {
     number1 = number1 ^ number2
 }
 
+//MARK: My Solution
+
+//func findMajorElement(_ array: [Int]) -> Int {
+//    var majNumber = array[0]
+//    var maxCount = 0
+//    var otherNumber = 0
+//    var otherCount = 0
+//    for number in array {
+//        if majNumber == number {
+//            maxCount += 1
+//        } else if otherNumber == number {
+//            otherCount += 1
+//        } else {
+//            otherNumber = number
+//            otherCount = 1
+//        }
+//        if otherCount > maxCount {
+//            swap(&otherCount, &maxCount)
+//            swap(&otherNumber, &majNumber)
+//        }
+//    }
+//    return majNumber
+//}
+
+// MARK: Book's solution
+
 func findMajorElement(_ array: [Int]) -> Int {
-    var majNumber = array[0]
-    var maxCount = 0
-    var otherNumber = 0
-    var otherCount = 0
+    var majNumber = 0
+    var count = 0
     for number in array {
-        if majNumber == number {
-            maxCount += 1
-        } else if otherNumber == number {
-            otherCount += 1
-        } else {
-            otherNumber = number
-            otherCount = 1
+        if count == 0 {
+            majNumber = number
         }
-        if otherCount > maxCount {
-            swap(&otherCount, &maxCount)
-            swap(&otherNumber, &majNumber)
+        if majNumber == number {
+            count += 1
+        } else {
+            count -= 1
         }
     }
     return majNumber
