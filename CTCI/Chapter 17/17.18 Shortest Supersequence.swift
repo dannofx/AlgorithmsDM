@@ -85,6 +85,8 @@ private extension Heap {
     }
 }
 
+// MARK: - Queue
+
 class QueueNode<T> {
     let value: T
     var next: QueueNode?
@@ -93,8 +95,6 @@ class QueueNode<T> {
         self.value = value
     }
 }
-
-// MARK: - Queue
 
 struct Queue<T> {
     var head: QueueNode<T>?
