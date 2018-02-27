@@ -12,7 +12,7 @@ Optionally, you can create a "Command utility" project in Xcode, add the files t
 
 ---
 
-# Others
+## Others
 
 Additionally, it contains some other popular problems, algorithms, and structures that came up frequently when I was reading this book. These additional items are listed here:
 1. **[Geometry](Others/Geometry)**: This section contains Geometry related problems and other useful structures used to solve this kind of problems. Some of these problems can be found in the book [Programming Challenges: The Programming Contest Training Manual](https://www.amazon.com.mx/Programming-Challenges-Contest-Training-Manual/dp/0387001638).
@@ -29,5 +29,3 @@ Additionally, it contains some other popular problems, algorithms, and structure
 12. **[Tournament Tree](Others/TournamentTree.swift)**:  Form of min (max) heap which is a complete binary tree. Every external node represents a player and internal node represents winner. In a tournament tree, every internal node contains winner and every leaf node contains one player.  
 
 **Note:** Many of the descriptions of the list were obtained from [Geeks for Geeks](https://www.geeksforgeeks.org)
-# Cracking The Coding Interview
-The folder [CTCI](CTCI/) contains some of the problems from the book Cracking The Coding Interview.
