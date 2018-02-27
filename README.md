@@ -2,6 +2,14 @@
 
 This repository contains some exercises, examples and data structures from the book [The Algorithm Design Manual](https://www.amazon.com.mx/Algorithm-Design-Manual-Steve-Skiena/dp/1848000693/). Everything was made using Swift 4.  
 
+To run the exercises open a terminal and execute the following command:
+
+```
+swift FILENAME.swift
+```
+
+Optionally, you can create a "Command utility" project in Xcode, add the files there and run the project.
+
 ---
 
 # Others
