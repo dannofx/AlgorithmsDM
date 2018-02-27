@@ -1,3 +1,8 @@
+//
+//  Created by Daniel Heredia on 2/27/18.
+//  Copyright © 2018 Daniel Heredia. All rights reserved.
+//
+
 // 13.6.4 Chocolate Chip Cookies
 
 //Making chocolate chip cookies involves mixing flour, salt, oil, baking soda, and

@@ -1,3 +1,8 @@
+//
+//  Created by Daniel Heredia on 2/27/18.
+//  Copyright © 2018 Daniel Heredia. All rights reserved.
+//
+
 // 14.7.1 Herding Frosh
 
 // One day, a lawn in the center of campus became infested with frosh. In an effort to

@@ -1,3 +1,8 @@
+//
+//  Created by Daniel Heredia on 2/27/18.
+//  Copyright © 2018 Daniel Heredia. All rights reserved.
+//
+
 //Superman has at least two powers that normal mortals do not possess, namely, x-ray vision and the
 //ability to fly faster than a speeding bullet. Some of his other skills are not so impressive: you
 //or I could probably change clothes in a telephone booth if we put our minds to it.

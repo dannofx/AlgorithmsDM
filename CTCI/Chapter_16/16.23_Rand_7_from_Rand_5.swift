@@ -1,3 +1,8 @@
+//
+//  Created by Daniel Heredia on 2/27/18.
+//  Copyright © 2018 Daniel Heredia. All rights reserved.
+//
+
 // Rand 7 from Rand 5
 
 import Foundation

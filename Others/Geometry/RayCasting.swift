@@ -1,3 +1,8 @@
+//
+//  Created by Daniel Heredia on 2/27/18.
+//  Copyright © 2018 Daniel Heredia. All rights reserved.
+//
+
 // Ray casting algorithm
 
 // Given a polygon and a point ‘p’, find if ‘p’ lies inside the polygon or not.

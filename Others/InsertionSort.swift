@@ -1,3 +1,8 @@
+//
+//  Created by Daniel Heredia on 2/27/18.
+//  Copyright © 2018 Daniel Heredia. All rights reserved.
+//
+
 import Foundation
 
 var elements = [9,0,12,2,3,1,5,6,8,7,11,10,4]

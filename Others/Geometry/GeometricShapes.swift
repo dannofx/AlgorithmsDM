@@ -1,4 +1,9 @@
 //
+//  Created by Daniel Heredia on 2/27/18.
+//  Copyright © 2018 Daniel Heredia. All rights reserved.
+//
+
+//
 //  GeometricShapes.swift
 //  Geometry
 //

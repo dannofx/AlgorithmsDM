@@ -1,3 +1,8 @@
+//
+//  Created by Daniel Heredia on 2/27/18.
+//  Copyright © 2018 Daniel Heredia. All rights reserved.
+//
+
 // Knapsack problem
 
 // Given weights and values of n items, put these items in a knapsack of capacity

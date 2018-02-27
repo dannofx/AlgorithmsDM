@@ -1,3 +1,8 @@
+//
+//  Created by Daniel Heredia on 2/27/18.
+//  Copyright © 2018 Daniel Heredia. All rights reserved.
+//
+
 // 13.6.1 Dog and Gopher
 
 //A large field has a dog and a gopher. The dog wants to eat the gopher, while the

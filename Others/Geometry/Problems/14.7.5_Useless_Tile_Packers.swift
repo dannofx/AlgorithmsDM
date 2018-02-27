@@ -1,3 +1,8 @@
+//
+//  Created by Daniel Heredia on 2/27/18.
+//  Copyright © 2018 Daniel Heredia. All rights reserved.
+//
+
 // 14.7.5 Useless Tile Packers
 
 // Useless Tile Packer, Inc., prides itself on efficiency. As their name suggests, they

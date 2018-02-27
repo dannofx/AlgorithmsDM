@@ -1,3 +1,8 @@
+//
+//  Created by Daniel Heredia on 2/27/18.
+//  Copyright © 2018 Daniel Heredia. All rights reserved.
+//
+
 // Tournament tree (find second minimum element)
 
 // Given an array of integers, find the minimum (or maximum) element and
