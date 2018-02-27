@@ -1,6 +1,6 @@
 # Algorithm problems
 
-This repository contains some exercises, examples and data structures from the book [The Algorithm Design Manual](https://www.amazon.com.mx/Algorithm-Design-Manual-Steve-Skiena/dp/1848000693/), everything was made using Swift 4.  
+This repository contains some exercises, examples and data structures from the book [The Algorithm Design Manual](https://www.amazon.com.mx/Algorithm-Design-Manual-Steve-Skiena/dp/1848000693/). Everything was made using Swift 4.  
 
 ---
 
