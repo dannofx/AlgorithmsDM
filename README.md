@@ -20,7 +20,7 @@ Additionally, it contains some other popular problems, algorithms, and structure
 3. **[Insertion Sort](Others/InsertionSort.swift)**: Sorting algorithm that is performed in **O(n^2)** runtime but has a simple implementation.
 4. **[Integer partitions](Others/IntegerPartition.swift)**: Given a positive integer n, generate all possible unique ways to represent n as a sum of positive integers. 
 5. **[K-Subsets](Others/KSubsets.swift)**: Given an integer array of N elements, the task is to divide this array into K non-empty subsets such that the sum of elements in every subset is same. All elements of this array should be part of exactly one partition.
-6. **[Knapsack problem](Others/Knapsack problem.swift)**:  Given weights and values of n items, put these items in a knapsack of capacity W to get the maximum total value in the knapsack.
+6. **[Knapsack problem](Others/KnapsackProblem.swift)**:  Given weights and values of n items, put these items in a knapsack of capacity W to get the maximum total value in the knapsack.
 7. **[Parentheses balance](Others/ParenthesesBalance.swift)**: Checks if an expression with parentheses is balanced.
 8. **[Set Partitions](Others/SetPartitions.swift)**: Generates the all nonempty subsets from an array with the elements from 1 to n.
 9. **[Shellsort](Others/Shellsort.swift)**: Variation of Insertion Sort, the idea of shellSort is to allow an exchange of far items.
