@@ -14,7 +14,7 @@ Optionally, you can create a "Command utility" project in Xcode, add the files t
 
 ## Others
 
-Additionally, it contains some other popular problems, algorithms, and structures that came up frequently when I was reading this book. These additional items are listed here:
+Additionally, it contains some other popular problems, algorithms, and structures that came up frequently when I was reading the book. These additional items are listed here:
 1. **[Geometry](Others/Geometry)**: This section contains Geometry related problems and other useful structures used to solve this kind of problems. Some of these problems can be found in the book [Programming Challenges: The Programming Contest Training Manual](https://www.amazon.com.mx/Programming-Challenges-Contest-Training-Manual/dp/0387001638).
 2. **[BTree](Others/BTree.swift)**: Self-balancing tree data structure that keeps data sorted and allows searches, sequential access, insertions, and deletions in logarithmic time.
 3. **[Insertion Sort](Others/InsertionSort.swift)**: Sorting algorithm that is performed in **O(n^2)** runtime but has a simple implementation.
