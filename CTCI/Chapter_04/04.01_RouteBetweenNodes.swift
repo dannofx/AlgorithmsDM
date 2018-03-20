@@ -4,38 +4,86 @@
 //
 
 // Route between nodes
+
 import Foundation
 
-
-class Node<Element: Comparable> {
-    let value: Element
-    var edges: [Node]
-    var visited: Bool
+// MARK: Queue
+class Queue {
+  
+  class QueueNode {
+    let value: Node
+    var next: QueueNode?
     
-    init(value: Element) {
-        self.value = value
-        self.edges = [Node]()
-        self.visited = false
+    init(_ value: Node) {
+      self.value = value
     }
     
-    func existsPath(to target: Node) -> Bool {
-        var queue = [Node]()
-        queue.insert(self, at: 0)
-        while let node = queue.popLast() {
-            node.visited = true
-            if node === target {
-                return true
-            }
-            for child in node.edges {
-                if !child.visited {
-                    queue.insert(contentsOf: node.edges, at: 0)
-                }
-            }
-        }
-        return false
+  }
+  
+  private var head: QueueNode?
+  private var tail: QueueNode?
+  private(set) var count: Int
+  
+  init() {
+    self.count = 0
+  }
+  
+  func queue(_ node: Node) {
+    self.count += 1
+    let newQNode = QueueNode(node)
+    if self.head == nil {
+      self.head = newQNode
     }
+    if self.tail == nil{
+      self.tail = newQNode
+    } else {
+      self.tail?.next = newQNode
+      self.tail = newQNode
+    }
+  }
+  
+  func dequeue() -> Node? {
+    guard let first = self.head else { return nil }
+    self.head = first.next
+    if first === self.tail {
+      self.tail = nil
+    }
+    return first.value
+  }
+  
+  func peek() -> Node? {
+    return self.head?.value
+  }
+  
 }
 
+// MARK: Node
+class Node {
+  let value: String
+  var edges: [Node]
+  
+  init(value: String) {
+    self.value = value
+    self.edges = [Node]()
+  }
+  
+  func existsPath(_ other: Node) -> Bool {
+    let queue = Queue()
+    queue.queue(self)
+    while let current = queue.dequeue() {
+      if current === other {
+        return true
+      }
+      for neighbor in current.edges {
+        queue.queue(neighbor)
+      }
+    }
+    return false
+  }
+}
+
+
+// MARK: Test
 var root = Node(value: "ROOT")
 var nodeA = Node(value: "A")
 var nodeB = Node(value: "B")
@@ -49,6 +97,4 @@ nodeA.edges.append(nodeC)
 nodeC.edges.append(nodeD)
 nodeC.edges.append(nodeE)
 nodeE.edges.append(nodeF)
-print("Is there a path between \(root.value) and \(nodeF.value): \(root.existsPath(to: nodeF))")
-
-
+print("Is there a path between \(root.value) and \(nodeF.value): \(root.existsPath(nodeF))")
