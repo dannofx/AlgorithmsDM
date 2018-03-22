@@ -7,87 +7,75 @@
 
 import Foundation
 
-protocol StackDelegate {
-    associatedtype Element: Comparable
-    mutating func push(_ element: Element)
-    mutating func pop() -> Element?
-    func peek() -> Element?
-}
+// MARK: Classic Stack
 
-struct Stack<T: Comparable>: StackDelegate {
-    typealias Element = T
-    var list: StackItem<Element>?
-    
-    class StackItem<Element> where Element: Comparable{
-        private(set) var next: StackItem?
-        private(set) var value: Element
-        
-        init(value: Element, lastItem: StackItem?) {
-            self.value = value
-            self.next = lastItem
-        }
-    }
-    
-    mutating func push(_ element: Element) {
-        let newItem = StackItem(value: element, lastItem: self.list)
-        self.list = newItem
-    }
-    
-    mutating func pop() -> Element? {
-        if let lastItem = self.list {
-            self.list = lastItem.next
-            return lastItem.value
-        } else {
-            return nil
-        }
-    }
-    
-    func peek() -> Element? {
-        return self.list?.value
-    }
-}
-
-struct MinStack<T: Comparable>: StackDelegate {
-    typealias Element = T
-    private var stack: Stack<Element>
-    private var minStack: Stack<Element>
+class Stack<T: Comparable> {
+    private var items: [T]
     
     init() {
-        stack = Stack<Element>()
-        minStack = Stack<Element>()
+        self.items = [T]()
     }
     
-    mutating func push(_ element: Element) {
-        self.stack.push(element)
-        if let minElement = minStack.peek() {
-            if minElement >= element {
-                minStack.push(element)
-            }
+    func push(_ item: T) {
+        self.items.append(item)    
+    }
+    
+    func pop() -> T? {
+        if self.isEmpty {
+            return nil
         } else {
-            minStack.push(element)
+            return self.items.removeLast()        
         }
     }
     
-    mutating func pop() -> Element? {
-        if let popElement = self.stack.pop() {
-            if let minElement = self.minStack.peek(), minElement == popElement {
+    var peek: T? {
+        return self.items.last
+    }
+    
+    var isEmpty: Bool {
+        return self.items.count == 0
+    }
+}
+
+// MARK: Min Stack
+
+class MinStack<T: Comparable>: Stack<T> {
+    let minStack: Stack<T>
+    
+    override init() {
+        self.minStack = Stack<T>()
+        super.init()
+    }
+    
+    override func push(_ item: T) {
+        super.push(item)
+        if let minVal = self.minStack.peek {
+            if minVal >= item {
+                self.minStack.push(item)
+            }
+        } else {
+            self.minStack.push(item)
+        }
+    }
+    
+    override func pop() -> T? {
+        if let popped = super.pop() {
+            guard let minVal = self.minStack.peek else { return popped }
+            if popped == minVal {
                 _ = self.minStack.pop()
             }
-            return popElement
+            return popped
         } else {
             return nil
         }
     }
     
-    func peek() -> Element? {
-        return self.stack.peek()
+    var minVal: T? {
+        return self.minStack.peek
     }
-    
-    func min() -> Element? {
-        return self.minStack.peek()
-    }
-    
 }
+
+// MARK: Test
 
 var stack = MinStack<Int>()
 stack.push(1)
@@ -100,6 +88,4 @@ stack.push(-2)
 stack.push(-4)
 _ = stack.pop()
 _ = stack.pop()
-print("Min: \(stack.min()!)")
-
-
+print("Min: \(stack.minVal!)")
