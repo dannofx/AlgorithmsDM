@@ -4,84 +4,111 @@
 //
 
 // Route between nodes
-
 import Foundation
 
 // MARK: Queue
-class Queue {
-  
-  class QueueNode {
-    let value: Node
-    var next: QueueNode?
+
+class Queue<T> {
+  class QueueNode<T> {
+    let value: T
+    var next: QueueNode<T>?
     
-    init(_ value: Node) {
+    init(value: T) {
       self.value = value
     }
-    
   }
   
-  private var head: QueueNode?
-  private var tail: QueueNode?
+  var head: QueueNode<T>?
+  var tail: QueueNode<T>?
   private(set) var count: Int
   
   init() {
     self.count = 0
   }
   
-  func queue(_ node: Node) {
+  func queue(_ value: T) {
     self.count += 1
-    let newQNode = QueueNode(node)
+    let newNode = QueueNode(value: value)
     if self.head == nil {
-      self.head = newQNode
+      self.head = newNode
     }
-    if self.tail == nil{
-      self.tail = newQNode
+    if self.tail == nil {
+      self.tail = newNode
     } else {
-      self.tail?.next = newQNode
-      self.tail = newQNode
+      self.tail?.next = newNode
+      self.tail =  newNode
     }
   }
-  
-  func dequeue() -> Node? {
-    guard let first = self.head else { return nil }
-    self.head = first.next
-    if first === self.tail {
+
+  func dequeue() -> T? {
+    guard let head = self.head else {
+      return nil
+    }
+    self.count -= 1
+    self.head = head.next
+    if self.tail === head {
       self.tail = nil
     }
-    return first.value
+    return head.value
   }
   
-  func peek() -> Node? {
+  func peekNext() -> T? {
     return self.head?.value
   }
-  
+
 }
 
-// MARK: Node
-class Node {
-  let value: String
-  var edges: [Node]
+// MARK: Graph
+
+class Node<T: Hashable> {
+  let value: T
+  var edges: [Node<T>]
   
-  init(value: String) {
+  init(value: T) {
     self.value = value
-    self.edges = [Node]()
+    self.edges = [Node<T>]()
   }
   
-  func existsPath(_ other: Node) -> Bool {
-    let queue = Queue()
+  func existsPathBFS(_ other: Node<T>) -> Bool {
+    var visited = Set<T>()
+    let queue = Queue<Node<T>>()
     queue.queue(self)
     while let current = queue.dequeue() {
-      if current === other {
+      visited.insert(current.value)
+      if current.value == other.value {
         return true
       }
-      for neighbor in current.edges {
-        queue.queue(neighbor)
+      for node in current.edges {
+        if !visited.contains(node.value) {
+          queue.queue(node)
+        }
       }
     }
     return false
   }
+//   Don't use DFS, BFS is better for this kind of problem.
+//   I just leaved DFS to make a comparison of the implementation
+//   func existsPathDFS(_ other: Node<T>, visited: inout Set<T>) -> Bool {
+//     if visited.contains(self.value) {
+//       return false
+//     }
+//     visited.insert(self.value)
+//     if self.value == other.value {
+//       return true
+//     }
+//     for node in self.edges {
+//       if node.existsPathDFS(other, visited: &visited) {
+//         return true
+//       }
+//     }
+//     return false
+//   }
+  
+//   func existsPathDFS(_ other: Node<T>) -> Bool {
+//     var visited = Set<T>()
+//     return self.existsPathDFS(other, visited: &visited)
+//   }
 }
-
 
 // MARK: Test
 var root = Node(value: "ROOT")
@@ -96,5 +123,7 @@ root.edges.append(nodeB)
 nodeA.edges.append(nodeC)
 nodeC.edges.append(nodeD)
 nodeC.edges.append(nodeE)
-nodeE.edges.append(nodeF)
-print("Is there a path between \(root.value) and \(nodeF.value): \(root.existsPath(nodeF))")
+//nodeE.edges.append(nodeF)
+print("BFS Is there a path between \(root.value) and \(nodeF.value): \(root.existsPathBFS(nodeF))")
+
+
