@@ -73,14 +73,15 @@ class Node<T: Hashable> {
     var visited = Set<T>()
     let queue = Queue<Node<T>>()
     queue.queue(self)
+    visited.insert(self.value)
     while let current = queue.dequeue() {
-      visited.insert(current.value)
       if current.value == other.value {
         return true
       }
       for node in current.edges {
         if !visited.contains(node.value) {
           queue.queue(node)
+          visited.insert(node.value)
         }
       }
     }
@@ -125,5 +126,4 @@ nodeC.edges.append(nodeD)
 nodeC.edges.append(nodeE)
 //nodeE.edges.append(nodeF)
 print("BFS Is there a path between \(root.value) and \(nodeF.value): \(root.existsPathBFS(nodeF))")
-
 
