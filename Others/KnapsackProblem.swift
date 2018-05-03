@@ -14,7 +14,7 @@
 // item, either pick the complete item, or don’t pick it (0-1 property).
 
 
-// This solution could work with floating points but the O(n) is 2^n
+// This solution could work with floating points but the time complexity would be O(2^n)
 //func knapsackProblem(maxWeight: Int, items: [(weight: Int, value: Int)]) -> Int {
 //    return knapsackProblem(maxWeight: maxWeight, lastIndex: items.count, items: items)
 //}
