@@ -9,10 +9,8 @@ import Foundation
 
 func shuffle(array: inout [Int]) {
     for i in 0..<array.count {
-        let j = Int(arc4random()) % array.count
-        let temp = array[i]
-        array[i] = array[j]
-        array[j] = temp
+        let j = Int(arc4random()) % (i + 1)
+        array.swapAt(i, j)
     }
 }
 

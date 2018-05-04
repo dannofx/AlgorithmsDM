@@ -11,7 +11,7 @@ let epsilon = 0.000001
 infix operator ====: AdditionPrecedence
 
 extension Double {
-    static func ===(lhs: Double, rhs: Double) -> Bool {
+    static func ====(lhs: Double, rhs: Double) -> Bool {
         return abs(lhs - rhs) < epsilon
     }
 }
@@ -39,9 +39,9 @@ struct Line: Hashable {
     
     static func ==(lhs: Line, rhs: Line) -> Bool {
         if lhs.isVertical && rhs.isVertical {
-            return lhs.b === rhs.b
+            return lhs.b ==== rhs.b
         } else {
-            return lhs.m === rhs.m && lhs.b === rhs.b
+            return lhs.m ==== rhs.m && lhs.b ==== rhs.b
         }
     }
     
@@ -63,7 +63,7 @@ struct Point: Hashable {
     }
     
     static func ==(lhs: Point, rhs: Point) -> Bool {
-        return lhs.x === rhs.x && lhs.y === rhs.y
+        return lhs.x ==== rhs.x && lhs.y ==== rhs.y
     }
     
 }

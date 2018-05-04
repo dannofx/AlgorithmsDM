@@ -35,9 +35,6 @@ func findBestSplit(dictionary: Set<String>, text: String, index: Int, solutions:
             let solution = findBestSplit(dictionary: dictionary, text: text, index: i + 1, solutions: &solutions)
             let totalInvalid = invalidChars + solution.invalid
             if totalInvalid < bestSolution.invalid {
-                if index == 0 {
-                    print(invalidChars)
-                }
                 bestSolution.text = "\(word) \(solution.text)"
                 bestSolution.invalid = totalInvalid
             }
