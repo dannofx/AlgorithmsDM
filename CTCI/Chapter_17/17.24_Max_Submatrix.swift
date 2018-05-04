@@ -26,7 +26,6 @@ func findMaxSubArray(array: [Int]) -> SubArray {
             current.start = i + 1
         }
     }
-    print(best)
     return best
 }
 
