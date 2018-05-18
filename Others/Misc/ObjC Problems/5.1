@@ -1,0 +1,32 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+
+
+@implementation Solution
+
+-(int)insertNumber:(int)insertion into:(int)cont start:(int)start end:(int)end {
+    int len = end - start;
+    int mask = (1 << len) - 1;
+    mask = mask << start;
+    int res = cont & ~(mask);
+    res = res | (insertion << start);
+    return res;
+}
+
+- (void)run {
+    int cont = 0b10000000000;
+    int addition = 0b10011;
+    int start = 2;
+    int end = 6;
+    int result = [self insertNumber:addition into:cont start:start end:end];
+    NSLog(@"Result %d", result);
+}
+
+@end

@@ -1,0 +1,82 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+
+BOOL bitAtIndex(int index, int number) {
+    int mask = 1 << index;
+    return (number & mask) != 0;
+}
+
+void setBitAtIndex(int index, int* number, BOOL value) {
+    int mask = 1 << index;
+    int nValue = value ? 1 << index : 0;
+    *number = (*number & ~mask) | nValue;
+}
+
+@interface NSString(Problem)
+- (BOOL)isPermutationOf:(NSString *)other;
+@end
+
+@implementation NSString(Problem)
+- (BOOL)isPermutationOf:(NSString *)other {
+    NSMutableDictionary<NSNumber *, NSNumber *> * characters = [[NSMutableDictionary<NSNumber *, NSNumber *> alloc] init];
+    for (int i = 0; i < [self length]; i++) {
+        int charValue = [self characterAtIndex:i];
+        NSNumber *charNumber = @(charValue);
+        int count = 1 + (characters[charNumber] == nil ? 0 : [characters[charNumber] intValue]);
+        characters[charNumber] = @(count);
+    }
+    for (int i = 0; i < [self length]; i++) {
+        int charValue = [other characterAtIndex:i];
+        NSNumber *charNumber = @(charValue);
+        int currentValue = characters[charNumber] == nil ? 0 : [characters[charNumber] intValue];
+        if (currentValue == 0) {
+            return NO;
+        }
+        characters[charNumber] = @(currentValue - 1);
+    }
+    return YES;
+}
+
+//- (BOOL)isPermutationOf:(NSString *)other {
+//    if ([self length] != [other length]) {
+//        return NO;
+//    }
+//    const int firstChar = 'a';
+//    const int charsetSize = 26;
+//    int chars[charsetSize] = {0};
+//    for (int i = 0; i < [self length]; i++) {
+//        int charValue = [self characterAtIndex: i] - firstChar;
+//        chars[charValue]++;
+//    }
+//    for (int i = 0; i < [other length]; i++) {
+//        int charValue = [other characterAtIndex:i] - firstChar;
+//        chars[charValue]--;
+//        if (chars[charValue] < 0) {
+//            return NO;
+//        }
+//    }
+//    return YES;
+//}
+@end
+
+@implementation Solution
+
+- (void)run {
+    NSString* example = @"thi";
+    BOOL isPermutation = [example isPermutationOf:@"hit"];
+    if (isPermutation) {
+        NSLog(@"Is permutation");
+    } else {
+        NSLog(@"Not permutation");
+    }
+}
+
+
+@end

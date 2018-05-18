@@ -1,0 +1,36 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+
+
+@implementation Solution
+
+-(int)flipToWin:(int)number {
+    int sequence = 0;
+    int lastSequence = 0;
+    int maxSequence = 0;
+    int index = 0;
+    while (index < 32) {
+        sequence += 1;
+        if ((number & (1 << index)) == 0) {
+            sequence -= lastSequence;
+            lastSequence = sequence;
+        }
+        if (sequence > maxSequence) {
+            maxSequence = sequence;
+        }
+        index += 1;
+    }
+    return maxSequence;
+}
+
+- (void)run {
+}
+
+@end

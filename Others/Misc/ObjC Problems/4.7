@@ -1,0 +1,90 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+
+typedef enum {
+    NodeStateNoVisited = 0,
+    NodeStateVisited,
+    NodeStateVisiting
+} NodeState;
+
+@interface Node: NSObject
+@property (nonatomic, retain) NSString * value;
+@property (nonatomic) NodeState status;
+@property (nonatomic, retain) NSArray *edges;
+
+@end
+
+@implementation Node
+- (id)initWithValue:(NSString *)value {
+    self = [super init];
+    if (self) {
+        
+    }
+    return self;
+}
+
+@end
+
+@interface Graph: NSObject
+@property (nonatomic, retain) NSArray *nodes;
+@end
+
+@implementation Graph
+
+- (id)initWithNodes:(NSArray *)nodes {
+    self = [super init];
+    if (self) {
+        self.nodes = nodes;
+    }
+    return self;
+}
+
+- (BOOL)performDFSFromNode:(Node *)node list:(NSMutableArray *)orderList {
+    if (node.status == NodeStateVisiting) {
+        return NO;
+    }
+    node.status = NodeStateVisiting;
+    for (Node *edgeNode in node.edges) {
+        if (edgeNode.status != NodeStateVisited) {
+            BOOL result = [self performDFSFromNode:edgeNode list:orderList];
+            if (!result) {
+                return NO;
+            }
+        }
+    }
+    node.status = NodeStateVisited;
+    [orderList addObject:node];
+    return YES;
+}
+
+- (NSArray *)findCompilationOrder {
+    NSMutableArray *orderList = [[NSMutableArray alloc] init];
+    for (Node *node in self.nodes) {
+        if (node.status == NodeStateNoVisited) {
+            BOOL result = [self performDFSFromNode:node list:orderList];
+            if (!result) {
+                return nil;
+            }
+        }
+    }
+    return [NSArray arrayWithArray:orderList];
+}
+
+
+
+@end
+
+
+@implementation Solution
+- (void)run {
+
+}
+
+@end

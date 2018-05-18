@@ -1,0 +1,36 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+
+
+@implementation Solution
+
+-(NSString *)convertToBinaryString:(CGFloat)number {
+    NSMutableString * result = [[NSMutableString alloc] initWithString:@"."];
+    int remaining = number;
+    int size = 0;
+    while (remaining > 0) {
+        if (size > 32) {
+            return result;
+        }
+        remaining *= 2;
+        int bit = floor(remaining);
+        [result appendFormat:@"%d", bit];
+        if (remaining > 1.0) {
+            remaining -= 1.0;
+        }
+        size += 1;
+    }
+    return result;
+}
+
+- (void)run {
+}
+
+@end

@@ -1,0 +1,78 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+
+@interface Node<__covariant ObjectType: NSObject *>: NSObject
+@property (nonatomic, retain) ObjectType value;
+@property (nonatomic, retain) Node<ObjectType> *next;
+
+- (id)initWithValue:(ObjectType)value;
+@end
+
+@implementation Node
+
+- (id)initWithValue:(id)value{
+    self = [super init];
+    if (self) {
+        self.value = value;
+    }
+    return self;
+}
+
+- (Node *)createNodeAtTailWithValue:(id)value {
+    Node *newNode = [[Node alloc] initWithValue:value];
+    Node *currentNode = self;
+    while (true) {
+        if (currentNode.next == nil) {
+            currentNode.next = newNode;
+            break;
+        }
+        currentNode = currentNode.next;
+    }
+    return newNode;
+}
+
+- (int)getLength {
+    return (self.next != nil ? [self.next getLength] : 0) + 1;
+}
+
+- (Node *)findIntersectionWithList:(Node *)other {
+    int len1 = [self getLength];
+    int len2 = [other getLength];
+    int offset = ABS(len2 - len1);
+    if (len1 > len2) {
+        return [self findIntersectionWithLongList:self shortList:other offset:offset];
+    } else {
+        return [self findIntersectionWithLongList:other shortList:self offset:offset];
+    }
+}
+
+- (Node *)findIntersectionWithLongList:(Node *)longList shortList:(Node *)shortList offset:(int)offset {
+    Node *lNode = longList;
+    Node *sNode = shortList;
+    for (int i = 0; i < offset; i++) {
+        lNode = lNode.next;
+    }
+    while (lNode != nil && sNode != nil) {
+        if (lNode == sNode) {
+            return lNode;
+        }
+        lNode = lNode.next;
+        sNode = sNode.next;
+    }
+    return nil;
+}
+
+@end
+@implementation Solution
+- (void)run {
+
+}
+
+@end

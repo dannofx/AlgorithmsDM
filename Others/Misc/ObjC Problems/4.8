@@ -1,0 +1,70 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+
+@interface TreeNode: NSObject
+@property (nonatomic, retain) NSString *value;
+@property (nonatomic, retain) TreeNode *left;
+@property (nonatomic, retain) TreeNode *right;
+
+- (TreeNode *)findFirstCommonAncestorFor:(TreeNode *)node1 and:(TreeNode *)node2;
+
+@end
+
+@implementation TreeNode: NSObject
+
+- (NSMutableArray *)findPathToRoot:(TreeNode *)node {
+    if (node == self) {
+        return [[NSMutableArray alloc] initWithObjects:self, nil];
+    }
+    NSMutableArray *path = [self.left findPathToRoot:node];
+    if (path == nil) {
+        path = [self.right findPathToRoot:node];
+    }
+    if (path != nil) {
+        [path addObject:self];
+    }
+    return path;
+}
+
+- (TreeNode *)findCommonAncestorForPath:(NSArray *)path1 andPath:(NSArray *)path2 {
+    if ([path1 count] < [path2 count]) {
+        return [self findCommonAncestorForPath:path2 andPath:path1];
+    }
+    int index1 = (int)([path1 count] - [path2 count]);
+    int index2 = 0;
+    while (index1 < [path1 count] && index2 < [path2 count]) {
+        if (path1[index1] == path2[index2]) {
+            return path1[index1];
+        }
+        index1++;
+        index2++;
+    }
+    return nil;
+}
+
+- (TreeNode *)findFirstCommonAncestorFor:(TreeNode *)node1 and:(TreeNode *)node2 {
+    NSMutableArray *path1 = [self findPathToRoot:node1];
+    if (path1 == nil) {
+        return nil;
+    }
+    NSMutableArray *path2 = [self findPathToRoot:node2];
+    if (path2 == nil) {
+        return nil;
+    }
+    return [self findCommonAncestorForPath:path1 andPath:path2];
+}
+@end
+
+@implementation Solution
+- (void)run {
+
+}
+
+@end

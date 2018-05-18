@@ -1,0 +1,51 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+
+@interface TreeNode: NSObject
+@property (nonatomic, retain) NSString *value;
+@property (nonatomic) int count;
+@property (nonatomic, retain) TreeNode *left;
+@property (nonatomic, retain) TreeNode *right;
+
+- (TreeNode *)getRandomNode:(TreeNode *)node;
+
+@end
+
+@implementation TreeNode: NSObject
+
+- (int)getRandomIndex {
+    return arc4random() % self.count;
+}
+
+- (TreeNode *)getNodeAtIndex:(int)index {
+    int leftSize = self.left != nil ? self.left.count : 0;
+    if (index < leftSize) {
+        return [self.left getNodeAtIndex:index];
+    } else if (leftSize == index) {
+        return self;
+    } else {
+        int rightIndex = index - leftSize - 1;
+        return [self getNodeAtIndex:rightIndex];
+    }
+}
+
+- (TreeNode *)getRandomNode:(TreeNode *)node {
+    int randomIndex = [self getRandomIndex];
+    return [self getNodeAtIndex:randomIndex];
+}
+
+@end
+
+@implementation Solution
+- (void)run {
+
+}
+
+@end

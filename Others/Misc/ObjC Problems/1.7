@@ -1,0 +1,66 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+
+
+@implementation Solution
+
+
+-(void)swap:(NSMutableArray<NSMutableArray<NSNumber *> *> *)matrix withIndexes:(NSArray *)indexes {
+    NSArray<NSNumber *> *fPos = indexes.firstObject;
+    NSNumber *subs = matrix[fPos[0].intValue][fPos[1].intValue];
+    for (int i = 1; i < [indexes count]; i++) {
+        NSArray<NSNumber *> *position = indexes[i];
+        NSNumber *tmp = matrix[position[0].intValue][position[1].intValue];
+        matrix[position[0].intValue][position[1].intValue] = subs;
+        subs = tmp;
+    }
+    matrix[fPos[0].intValue][fPos[1].intValue] = subs;
+}
+
+- (void)rotate:(NSMutableArray<NSMutableArray<NSNumber *> *> *)matrix {
+    int left = 0;
+    int size = (int)[matrix count];
+    while (left < size / 2) {
+        int right = size - 1 - left;
+        int top = left;
+        int bottom = right;
+        for (int i = left; i < right; i++) {
+            int j = right - (i - left);
+            NSArray *indexes = @[@[@(top), @(i)],
+                                  @[@(i), @(right)],
+                                  @[@(bottom), @(j)],
+                                  @[@(j) , @(left)]];
+            [self swap:matrix withIndexes:indexes];
+        }
+        left++;
+    }
+}
+
+- (void)run {
+    NSMutableArray<NSMutableArray<NSNumber *> *> *matrix =  [NSMutableArray<NSMutableArray<NSNumber *> *> arrayWithObjects:
+                                                               [NSMutableArray<NSNumber *> arrayWithObjects:@1,@2,@3,@4,@5, nil],
+                                                                [NSMutableArray<NSNumber *> arrayWithObjects:@6,@7,@8,@9,@10, nil],
+                                                                [NSMutableArray<NSNumber *> arrayWithObjects:@11,@12,@13,@14,@15, nil],
+                                                                [NSMutableArray<NSNumber *> arrayWithObjects:@16,@17,@18,@19,@20, nil],
+                                                                [NSMutableArray<NSNumber *> arrayWithObjects:@21,@22,@23,@24,@25, nil], nil];
+    [self rotate:matrix];
+    for (int i = 0; i < [matrix count]; i++) {
+        NSMutableArray<NSNumber *> * row = matrix[i];
+        NSMutableString *rowText = [[NSMutableString alloc] init];
+        for (int j = 0; j < [row count]; j++) {
+            [rowText appendFormat:@"%d,", row[j].intValue];
+        }
+        NSLog(@"%@", rowText);
+    }
+    
+}
+
+
+@end

@@ -1,0 +1,27 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+
+
+@implementation Solution
+
+- (int)findNeededSwapsA:(int)a B:(int)b {
+    int mix = a ^ b;
+    int swaps = 0;
+    while (mix != 0) {
+        swaps += 1;
+        mix = mix & (mix - 1);
+    }
+    return swaps;
+}
+
+- (void)run {
+}
+
+@end

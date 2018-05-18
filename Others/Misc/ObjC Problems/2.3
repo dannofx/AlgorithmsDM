@@ -1,0 +1,57 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+
+@interface Node<__covariant ObjectType: NSObject *>: NSObject
+@property (nonatomic, retain) ObjectType value;
+@property (nonatomic, retain) Node<ObjectType> *next;
+
+- (id)initWithValue:(ObjectType)value;
+@end
+
+@implementation Node
+
+- (id)initWithValue:(id)value{
+    self = [super init];
+    if (self) {
+        self.value = value;
+    }
+    return self;
+}
+
+- (Node *)createNodeAtTailWithValue:(id)value {
+    Node *newNode = [[Node alloc] initWithValue:value];
+    Node *currentNode = self;
+    while (true) {
+        if (currentNode.next == nil) {
+            currentNode.next = newNode;
+            break;
+        }
+        currentNode = currentNode.next;
+    }
+    return newNode;
+}
+
+- (void)deleteFromTheMiddle {
+    Node *nextNode = self.next;
+    if (nextNode == nil) {
+        NSAssert(false, @"No middle node");
+    }
+    self.value = nextNode.value;
+    self.next = nextNode.next;
+    nextNode.next = nil;
+}
+
+@end
+@implementation Solution
+- (void)run {
+
+}
+
+@end

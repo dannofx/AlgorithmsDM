@@ -1,0 +1,27 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+
+
+@implementation Solution
+
+- (int)swapBits:(int)number {
+    int mask = 0b01;
+    int count = 2;
+    while (count < 32) {
+        mask = mask | mask << count;
+        count *= 2;
+    }
+    return ((number & mask) << 1) | ((number & ~mask) >> 1);
+}
+
+- (void)run {
+}
+
+@end

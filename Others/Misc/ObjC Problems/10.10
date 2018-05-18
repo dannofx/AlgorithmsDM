@@ -1,0 +1,106 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+
+const NSUInteger numbersCount = 100;
+const NSUInteger bufferLimit = 40;
+const NSUInteger nsuintegerWidth = 64;
+
+@interface NSMutableArray(Utils)
++ (NSMutableArray *)arrayWithDefault:(id)dObject count:(int)count;
+@end
+
+@implementation NSMutableArray(Utils)
++ (NSMutableArray *)arrayWithDefault:(id)dObject count:(int)count {
+    NSMutableArray *array = [[NSMutableArray alloc] initWithCapacity:count];
+    for (int i = 0; i < count; i++) {
+        [array addObject:[dObject copy]];
+    }
+    return array;
+}
+@end
+
+@interface TreeNode: NSObject
+@property (nonatomic, retain) TreeNode *smaller;
+@property (nonatomic, retain) TreeNode *larger;
+@property (nonatomic) int value;
+@property (nonatomic) int rank;
+
+- (id)initWithValue:(int)value;
+- (void)trackValue:(int)value;
+- (int)getRank:(int)value;
+
+@end
+
+@implementation TreeNode
+- (id)initWithValue:(int)value {
+    self = [super init];
+    if (self) {
+        self.value = value;
+        self.rank = 0;
+    }
+    return self;
+}
+
+- (void)trackValue:(int)value {
+    TreeNode *newNode = [[TreeNode alloc] initWithValue:value];
+    [self track: newNode];
+}
+
+- (int)getRank:(int)value {
+    return [self findNodeRankWithValue:value previousRank:0];
+}
+
+- (void)track:(TreeNode *)node {
+    if (self.value == node.value) {
+        self.rank++;
+    } else if (node.value < self.value) {
+        self.rank++;
+        if (self.smaller != nil) {
+            [self.smaller track:node];
+        } else {
+            self.smaller = node;
+        }
+    } else {
+        if (self.larger != nil) {
+            if (self.larger != nil) {
+                [self.larger track:node];
+            } else {
+                self.larger = node;
+            }
+        }
+    }
+}
+
+- (int)findNodeRankWithValue:(int)value previousRank:(int)previousRank {
+    int currentRank = previousRank + self.rank;
+    if (self.value == value) {
+        return currentRank;
+    } else if (self.value > value) {
+        if (self.smaller != nil) {
+            return [self.smaller findNodeRankWithValue:value previousRank:previousRank];
+        } else {
+            return -1;
+        }
+    } else {
+        if (self.larger != nil) {
+            return [self.larger findNodeRankWithValue:value previousRank:currentRank + 1];
+        } else {
+            return -1;
+        }
+    }
+}
+@end
+
+@implementation Solution
+
+- (void)run {
+}
+
+@end

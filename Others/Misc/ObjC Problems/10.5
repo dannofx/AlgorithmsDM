@@ -1,0 +1,95 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+
+@interface NSMutableArray(Utils)
++ (NSMutableArray *)arrayWithDefault:(id)dObject count:(int)count;
+@end
+
+@implementation NSMutableArray(Utils)
++ (NSMutableArray *)arrayWithDefault:(id)dObject count:(int)count {
+    NSMutableArray *array = [[NSMutableArray alloc] initWithCapacity:count];
+    for (int i = 0; i < count; i++) {
+        [array addObject:[dObject copy]];
+    }
+    return array;
+}
+@end
+
+@interface Listy: NSObject
+@property (nonatomic, retain) NSArray *numbers;
+- (id)initWithNumbers:(NSArray *)numbers;
+@end
+
+@implementation Listy
+
+- (id)initWithNumbers:(NSArray *)numbers {
+    self = [super init];
+    if (self) {
+        self.numbers = [numbers copy];
+    }
+    return self;
+}
+
+- (id)objectAtIndexedSubscript:(unsigned int)idx {
+    if (idx >= [self.numbers count]) {
+        return @(-1);
+    }
+    return self.numbers[idx];
+}
+
+@end
+
+@implementation Solution
+
+- (int)findClosestNoEmptyInArray:(NSArray *)array start:(int)start end:(int)end middle:(int)middle{
+    int left = middle;
+    int right = middle + 1;
+    while (left >= start || right <= end) {
+        if (left >= start) {
+            if (![array[left] isEqualToString:@""]) {
+                return left;
+            } else {
+                left--;
+            }
+        }
+        if (right <= end) {
+            if (![array[right] isEqualToString:@""]) {
+                return right;
+            } else {
+                right++;
+            }
+        }
+    }
+    return -1;
+}
+
+- (int)findString:(NSString *)string inArray:(NSArray *)array start:(int)start end:(int)end {
+    if (start > end) {
+        return -1;
+    }
+    int middle = (end - start) / 2 + start;
+    middle = [self findClosestNoEmptyInArray:array start:start end:end middle:middle];
+    if (middle == -1) {
+        return middle;
+    }
+    NSString *midValue = array[middle];
+    if ([midValue isEqualToString:string]) {
+        return middle;
+    } else if ([midValue compare:string] == NSOrderedAscending) {
+        return [self findString:string inArray:array start:middle + 1 end:end];
+    } else {
+        return [self findString:string inArray:array start:start end:middle - 1];
+    }
+}
+
+- (void)run {
+}
+
+@end

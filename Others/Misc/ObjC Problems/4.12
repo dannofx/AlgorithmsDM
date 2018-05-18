@@ -1,0 +1,49 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+
+@interface TreeNode: NSObject
+@property (nonatomic)  int value;
+@property (nonatomic, retain) TreeNode *left;
+@property (nonatomic, retain) TreeNode *right;
+
+- (int)countPathsWithSum:(int)sum;
+
+@end
+
+@implementation TreeNode: NSObject
+- (int)countPathsWithSum:(int)target lastSum:(int)lastSum previousSums:(NSMutableDictionary *)previous {
+    int currentSum = self.value + lastSum;
+    int neededSum = target - currentSum;
+    NSNumber *neededNum = @(neededSum);
+    NSNumber *currentNum = @(currentSum);
+    int count = (previous[neededNum] != nil) ? [previous[neededNum] intValue] : 0;
+    count += currentSum == target ? 1 : 0;
+    previous[currentNum] = @((previous[currentNum] != nil ? [previous[currentNum] intValue] : 0) + 1);
+    if (self.left != nil) {
+        count += [self.left countPathsWithSum:target lastSum:currentSum previousSums:previous];
+    }
+    if (self.right != nil) {
+        count += [self.right countPathsWithSum:target lastSum:currentSum previousSums:previous];
+    }
+    previous[currentNum] = [previous[currentNum] intValue] == 1 ? nil : @([previous[currentNum] intValue] - 1);
+    return count;
+}
+- (int)countPathsWithSum:(int)sum {
+    NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
+    return [self countPathsWithSum:sum lastSum:0 previousSums:dictionary];
+}
+@end
+
+@implementation Solution
+- (void)run {
+
+}
+
+@end

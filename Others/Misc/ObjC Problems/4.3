@@ -1,0 +1,190 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+
+@interface ListNode<ObjectType>: NSObject
+@property (nonatomic, retain) ObjectType value;
+@property (nonatomic, retain) ListNode<ObjectType> *next;
+
+- (id)initWithValue:(ObjectType)value;
+
+@end
+
+@implementation ListNode
+
+- (id)initWithValue:(id)value {
+    self = [super self];
+    if (self) {
+        self.value = value;
+    }
+    return self;
+}
+@end
+
+@interface List<ObjectType>: NSObject
+@property (nonatomic, readonly) NSUInteger count;
+@property (nonatomic, readonly) ListNode<ObjectType> *head;
+- (void)append:(id)element;
+@end
+
+@implementation List {
+    ListNode<id> *tail;
+    int _count;
+}
+@synthesize head = _head;
+
+- (id)init {
+    self = [super init];
+    if (self) {
+        _count = 0;
+    }
+    return self;
+}
+
+- (void)append:(id)element {
+    ListNode *newNode = [[ListNode alloc] initWithValue:element];
+    _count++;
+    if (self.head == nil) {
+        _head = newNode;
+        tail = self.head;
+    } else {
+        tail.next = newNode;
+        tail = newNode;
+    }
+}
+
+- (NSUInteger)count {
+    return _count;
+}
+
+@end
+
+@interface QueueNode<ObjectType>: NSObject
+@property (nonatomic, retain) ObjectType value;
+@property (nonatomic, retain) QueueNode<ObjectType> *next;
+
+- (id)initWithValue:(ObjectType)value;
+
+@end
+
+@implementation QueueNode
+
+- (id)initWithValue:(id)value {
+    self = [super self];
+    if (self) {
+        self.value = value;
+    }
+    return self;
+}
+@end
+
+@interface Queue<ObjectType>: NSObject
+@property (nonatomic, readonly) NSUInteger count;
+- (ObjectType)peek;
+- (ObjectType)dequeue;
+- (void)queue:(ObjectType)element;
+@end
+
+@implementation Queue {
+    QueueNode<id> *head;
+    QueueNode<id> *tail;
+    int _count;
+}
+
+- (id)init {
+    self = [super init];
+    if (self) {
+        _count = 0;
+    }
+    return self;
+}
+
+- (id)peek {
+    return head;
+}
+
+- (id)dequeue {
+    QueueNode *node = head;
+    if (node != nil) {
+        _count--;
+        if (head == tail) {
+            tail = nil;
+        }
+        head = head.next;
+        node.next = nil;
+        // tail?
+        return node.value;
+    }
+    return nil;
+}
+
+- (void)queue:(id)element {
+    QueueNode *newNode = [[QueueNode alloc] initWithValue:element];
+    _count++;
+    if (head == nil) {
+        head = newNode;
+        tail = head;
+    } else {
+        tail.next = newNode;
+        tail = newNode;
+    }
+}
+
+- (NSUInteger)count {
+    return _count;
+}
+
+@end
+
+@interface TreeNode: NSObject
+@property (nonatomic) int value;
+@property (nonatomic, retain) TreeNode *left;
+@property (nonatomic, retain) TreeNode *right;
+@end
+
+@implementation TreeNode
+
+- (id)initWithValue:(int)value {
+    self = [super init];
+    if (self) {
+        self.value = value;
+    }
+    return self;
+}
+
+- (NSArray<List<TreeNode *> *> *)convertToLists {
+    Queue<TreeNode *> *queue = [[Queue<TreeNode *> alloc] init];
+    NSMutableArray<List<TreeNode *> *> *lists = [[NSMutableArray<List<TreeNode *> *> alloc] init];
+    [queue queue:self];
+    while ([queue count] > 0) {
+        int limit = (int)[queue count];
+        List<TreeNode *> *list = [[List<TreeNode *> alloc] init];
+        for (int i = 0; i < limit; i++) {
+            TreeNode *node = [queue dequeue];
+            [list append:node];
+            if (node.left != nil) {
+                [queue queue:node.left];
+            }
+            if (node.right != nil) {
+                [queue queue:node.right];
+            }
+        }
+        [lists addObject:list];
+    }
+    return [[NSArray<List<TreeNode *> *> alloc] initWithArray:lists];
+}
+
+@end
+
+@implementation Solution
+- (void)run {
+
+}
+
+@end

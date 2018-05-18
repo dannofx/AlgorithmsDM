@@ -1,0 +1,54 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+
+@interface NSMutableArray(Utils)
++ (NSMutableArray *)arrayWithDefault:(id)dObject count:(int)count;
+@end
+
+@implementation NSMutableArray(Utils)
++ (NSMutableArray *)arrayWithDefault:(id)dObject count:(int)count {
+    NSMutableArray *array = [[NSMutableArray alloc] initWithCapacity:count];
+    for (int i = 0; i < count; i++) {
+        [array addObject:[dObject copy]];
+    }
+    return array;
+}
+@end
+
+@implementation Solution
+
+- (BOOL)mergeArray:(NSMutableArray *)b inArray:(NSMutableArray *)a lenCon:(int)len {
+    if ([a count] != ([b count] + len)) {
+        return NO;
+    }
+    int availableIndex = (int)[a count] - 1;
+    int aIndex = len - 1;
+    int bIndex = (int)[b count] - 1;
+    while (aIndex >= 0 && bIndex >= 0) {
+        if (a[aIndex] > b[bIndex]) {
+            a[availableIndex] = a[aIndex];
+            aIndex--;
+        } else {
+            a[availableIndex] = b[bIndex];
+            bIndex--;
+        }
+        availableIndex--;
+    }
+    while (bIndex >= 0) {
+        a[availableIndex] = b[bIndex];
+        bIndex--;
+    }
+    return YES;
+}
+
+- (void)run {
+}
+
+@end

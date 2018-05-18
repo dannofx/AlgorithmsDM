@@ -1,0 +1,83 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+
+const NSUInteger numbersCount = 100;
+const NSUInteger bufferLimit = 40;
+const NSUInteger nsuintegerWidth = 64;
+
+@interface NSMutableArray(Utils)
++ (NSMutableArray *)arrayWithDefault:(id)dObject count:(int)count;
+@end
+
+@implementation NSMutableArray(Utils)
++ (NSMutableArray *)arrayWithDefault:(id)dObject count:(int)count {
+    NSMutableArray *array = [[NSMutableArray alloc] initWithCapacity:count];
+    for (int i = 0; i < count; i++) {
+        [array addObject:[dObject copy]];
+    }
+    return array;
+}
+@end
+
+@interface Listy: NSObject
+@property (nonatomic, retain) NSArray *numbers;
+- (id)initWithNumbers:(NSArray *)numbers;
+@end
+
+@implementation Listy
+
+- (id)initWithNumbers:(NSArray *)numbers {
+    self = [super init];
+    if (self) {
+        self.numbers = [numbers copy];
+    }
+    return self;
+}
+
+- (id)objectAtIndexedSubscript:(unsigned int)idx {
+    if (idx >= [self.numbers count]) {
+        return @(-1);
+    }
+    return self.numbers[idx];
+}
+
+@end
+
+@implementation Solution
+
+- (void)printDuplicates:(NSArray *)numbers {
+    NSUInteger wordByteLength = nsuintegerWidth / 8;
+    NSUInteger presenceSize = bufferLimit / wordByteLength;
+    if (presenceSize % wordByteLength > 0) {
+        presenceSize++;
+    }
+    NSUInteger presence[presenceSize];
+    for (int i = 0; i < presenceSize; i++) {
+        presence[i] = 0;
+    }
+    for (NSNumber * number in numbers) {
+        NSUInteger nNumber = [number unsignedIntegerValue];
+        NSUInteger containerIndex = nNumber / nsuintegerWidth;
+        NSUInteger container = presence[containerIndex];
+        NSUInteger bitIndex = nNumber % nsuintegerWidth;
+        NSUInteger mask = 1 << bitIndex;
+        if ((container & mask) != 0) {
+            NSLog(@"Repeated number %lu", (unsigned long)nNumber);
+        } else {
+            presence[containerIndex] = container | mask;
+        }
+    }
+
+}
+
+- (void)run {
+}
+
+@end

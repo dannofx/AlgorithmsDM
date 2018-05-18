@@ -1,0 +1,52 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+
+@interface NSMutableArray(Utils)
++ (NSMutableArray *)arrayWithDefault:(id)dObject count:(int)count;
+@end
+
+@implementation NSMutableArray(Utils)
++ (NSMutableArray *)arrayWithDefault:(id)dObject count:(int)count {
+    NSMutableArray *array = [[NSMutableArray alloc] initWithCapacity:count];
+    for (int i = 0; i < count; i++) {
+        [array addObject:[dObject copy]];
+    }
+    return array;
+}
+@end
+
+@implementation Solution
+
+- (int)calculatePossibleWays:(int)staircase memo:(NSMutableArray *)memo {
+    if (staircase < 0) {
+        return 0;
+    }
+    if (staircase == 0) {
+        return 1;
+    }
+    if (![memo[staircase] isEqual:[NSNull null]]) {
+        return [memo[staircase] intValue];
+    }
+    int ways = [self calculatePossibleWays:staircase - 1 memo:memo] +
+                [self calculatePossibleWays:staircase - 2 memo:memo] +
+                [self calculatePossibleWays:staircase - 3 memo:memo];
+    memo[staircase] = @(ways);
+    return ways;
+}
+
+- (int)calculatePossibleWays:(int)staircase {
+    NSMutableArray * array = [NSMutableArray arrayWithDefault:[NSNull null] count:staircase + 1];
+    return [self calculatePossibleWays:staircase memo:array];
+}
+
+- (void)run {
+}
+
+@end

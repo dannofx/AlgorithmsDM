@@ -1,0 +1,46 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+
+@interface NSString(Rotation)
+- (BOOL)isSubstring:(NSString *)other;
+- (BOOL)isRotation:(NSString *)other;
+@end
+
+@implementation NSString(Rotation)
+
+- (BOOL)isSubstring:(NSString *)other {
+    return [self rangeOfString:other].location != NSNotFound;
+}
+
+- (BOOL)isRotation:(NSString *)other {
+    if ([self length] == 0 || [self length] != [other length]) {
+        return NO;
+    }
+    NSString * superString = [NSString stringWithFormat:@"%@%@", self, self];
+    return [superString isSubstring:other];
+}
+
+@end
+
+@implementation Solution
+
+
+- (void)run {
+    NSString * text1 = @"hola";
+    NSString * text2 = @"olah";
+    if ([text1 isRotation:text2]) {
+        NSLog(@"IS rotation");
+    } else {
+        NSLog(@"Is not rotation");
+    }
+}
+
+
+@end

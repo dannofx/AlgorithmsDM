@@ -1,0 +1,50 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+
+
+@implementation Solution
+
+- (int)findPattern:(int)pattern inNumber:(int)number {
+    int index = 0;
+    while (index < 31) {
+        int mask = 0b11 << index;
+        if ((number & mask) == (pattern << index)) {
+            return index;
+        }
+        index++;
+    }
+    return -1;
+}
+
+- (int)replacePattern:(int)pattern withValue:(int)replacement inNumber:(int)number success:(BOOL *)success {
+    int index = [self findPattern:pattern inNumber:number];
+    if (index == -1) {
+        *success = NO;
+        return -1;
+    }
+    int mask = 0b11 << index;
+    int res = number & ~mask;
+    res = res || replacement << index;
+    *success = YES;
+    return res;
+}
+
+- (int)findNextNumber:(int)number success:(BOOL *)success {
+    return [self replacePattern:0b01 withValue:0b10 inNumber:number success:success];
+}
+
+- (int)findPreviousNumber:(int)number success:(BOOL *)success {
+    return [self replacePattern:0b10 withValue:0b01 inNumber:number success:success];
+}
+
+- (void)run {
+}
+
+@end

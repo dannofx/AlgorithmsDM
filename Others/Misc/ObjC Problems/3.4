@@ -1,0 +1,76 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+@interface Stack<ObjectType>: NSObject
+@property (nonatomic, readonly) NSUInteger count;
+- (ObjectType)peek;
+- (ObjectType)pop;
+- (void)push:(ObjectType)element;
+@end
+
+@interface Stack(Private)
+@property (nonatomic, retain) NSMutableArray *items;
+@end
+
+@implementation Stack
+- (id)peek {
+    return self.items.lastObject;
+}
+
+- (id)pop {
+    if ([self.items count] > 0) {
+        id last = self.items.lastObject;
+        [self.items removeLastObject];
+        return last;
+    } else {
+        return nil;
+    }
+}
+
+- (void)push:(id)element {
+    [self.items addObject:element];
+}
+
+- (NSUInteger)count {
+    return [self.items count];
+}
+
+@end
+
+@interface Queue<ObjectType>: NSObject
+- (ObjectType)dequeue;
+- (void)queue:(ObjectType)element;
+@end
+
+@implementation Queue {
+    Stack<id> *queueStack;
+    Stack<id> *dequeueStack;
+}
+
+- (id)dequeue {
+    if ([dequeueStack count] > 0) {
+        return [dequeueStack pop];
+    }
+    while ([queueStack count] > 0) {
+        [dequeueStack push:[queueStack pop]];
+    }
+    return [dequeueStack pop];
+}
+
+- (void)queue:(id)element {
+    [queueStack push:element];
+}
+@end
+
+@implementation Solution
+- (void)run {
+
+}
+
+@end

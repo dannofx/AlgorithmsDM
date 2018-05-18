@@ -1,0 +1,93 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+
+@interface NSMutableArray(Utils)
++ (NSMutableArray *)arrayWithDefault:(id)dObject count:(int)count;
+@end
+
+@implementation NSMutableArray(Utils)
++ (NSMutableArray *)arrayWithDefault:(id)dObject count:(int)count {
+    NSMutableArray *array = [[NSMutableArray alloc] initWithCapacity:count];
+    for (int i = 0; i < count; i++) {
+        [array addObject:[dObject copy]];
+    }
+    return array;
+}
+@end
+
+@interface NSString(Utils)
+-(NSMutableArray *)convertToCharArray;
+-(NSMutableDictionary *)convertToCharDictionary;
++(NSString *)convertToString:(NSArray *)array;
+@end
+
+@implementation NSString(Utils)
+-(NSMutableArray *)convertToCharArray {
+    NSMutableArray *characters = [[NSMutableArray alloc] init];
+    for (int i = 0; i < [self length]; i++) {
+        [characters addObject:@([self characterAtIndex:i])];
+    }
+    return characters;
+}
+
+-(NSMutableDictionary *)convertToCharDictionary {
+    NSMutableDictionary *characters = [[NSMutableDictionary alloc] init];
+    for (int i = 0; i < [self length]; i++) {
+        NSNumber * numChar = @([self characterAtIndex:i]);
+        if (characters[numChar] != nil) {
+            characters[numChar] = @([characters[numChar] intValue] + 1);
+        } else {
+            characters[numChar] = @(1);
+        }
+    }
+    return characters;
+}
+
++(NSString *)convertToString:(NSArray *)array {
+    NSMutableString *text = [[NSMutableString alloc] init];
+    for (NSNumber *numChar in array) {
+        [text appendFormat:@"%c", [numChar charValue]];
+    }
+    return [NSString stringWithString:text];
+}
+@end
+
+@implementation Solution
+- (int)makeChange:(int)change denominations:(NSArray *)denominations index:(int)index memo:(NSMutableArray *)memo {
+    if (index == [denominations count]) {
+        return 0;
+    }
+    if (change < 0) {
+        return 0;
+    }
+    if (change == 0) {
+        return 1;
+    }
+    if (memo[index][change] != nil) {
+        return [memo[index][change] intValue];
+    }
+    int count = 0;
+    for (int i = index; i < [denominations count]; i++) {
+        int value = [denominations[i] intValue];
+        count += [self makeChange:change - value denominations:denominations index:i memo:memo];
+    }
+    memo[index][change] = @(count);
+    return count;
+}
+
+- (int)makeChange:(int)change denominations:(NSArray *)denominations {
+    NSMutableArray *memo = [NSMutableArray arrayWithDefault:[[NSMutableDictionary alloc] init] count:(int)[denominations count]];
+    return [self makeChange:change denominations:denominations index:0 memo:memo];
+}
+
+- (void)run {
+}
+
+@end

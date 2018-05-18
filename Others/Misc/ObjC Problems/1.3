@@ -1,0 +1,59 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+
+
+@implementation Solution
+
+- (int)findRealLength:(char *)string {
+    int lastPos = (int)strlen(string) - 1;
+    while (lastPos >= 0 && string[lastPos] == ' ') {
+        lastPos--;
+    }
+    return lastPos + 1;
+}
+
+- (int)countSpaces:(char *)string realLength:(int)length {
+    int spaces = 0;
+    for (int i = 0; i < length; i++) {
+        if (string[i] == ' ') {
+            spaces += 1;
+        }
+    }
+    return spaces;
+}
+- (void)urlify:(char *)url {
+    int realLength = [self findRealLength:url];
+    int spaces = [self countSpaces:url realLength:realLength];
+    int originalIndex = realLength - 1;
+    int copyIndex = originalIndex + spaces * 2;
+    while (originalIndex >= 0) {
+        char character = url[originalIndex];
+        if (character == ' ') {
+            url[copyIndex] = '0';
+            copyIndex--;
+            url[copyIndex] = '2';
+            copyIndex--;
+            url[copyIndex] = '%';
+        } else {
+            url[copyIndex] = url[originalIndex];
+        }
+        originalIndex--;
+        copyIndex--;
+    }
+}
+
+- (void)run {
+    char example[] = "Give me this    ";
+    [self urlify:example];
+    NSLog(@"Result %s", example);
+}
+
+
+@end

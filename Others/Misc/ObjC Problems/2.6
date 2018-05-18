@@ -1,0 +1,65 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+
+@interface Node<__covariant ObjectType: NSObject *>: NSObject
+@property (nonatomic, retain) ObjectType value;
+@property (nonatomic, retain) Node<ObjectType> *next;
+
+- (id)initWithValue:(ObjectType)value;
+@end
+
+@implementation Node
+
+- (id)initWithValue:(id)value{
+    self = [super init];
+    if (self) {
+        self.value = value;
+    }
+    return self;
+}
+
+- (Node *)createNodeAtTailWithValue:(id)value {
+    Node *newNode = [[Node alloc] initWithValue:value];
+    Node *currentNode = self;
+    while (true) {
+        if (currentNode.next == nil) {
+            currentNode.next = newNode;
+            break;
+        }
+        currentNode = currentNode.next;
+    }
+    return newNode;
+}
+
+- (BOOL)isPalindrome {
+    BOOL result = YES;
+    [Node findPalindromeWithHead:self currentNode:self result:&result];
+    return result;
+}
+
++ (Node *)findPalindromeWithHead:(Node *)head currentNode:(Node*)node result:(BOOL *)result {
+    if (node.next == nil) {
+        *result = [node.value isEqualTo:head.value];
+        return head.next;
+    }
+    Node *compareNode = [self findPalindromeWithHead:head currentNode:node.next result:result];
+    if (!result || [compareNode.value isEqualTo:node.value]) {
+        *result = NO;
+        return nil;
+    }
+    return compareNode.next;
+}
+@end
+@implementation Solution
+- (void)run {
+
+}
+
+@end

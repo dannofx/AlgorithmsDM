@@ -1,0 +1,63 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+
+@interface TreeNode: NSObject
+@property (nonatomic, retain) NSString *value;
+@property (nonatomic, retain) TreeNode *left;
+@property (nonatomic, retain) TreeNode *right;
+
+- (BOOL)isSubTree:(TreeNode *)node;
+
+@end
+
+@implementation TreeNode: NSObject
+
+- (BOOL)isTreeAMatch:(TreeNode *)node {
+    if (![self.value isEqual:node.value]) {
+        return NO;
+    }
+    if (((self.left == nil) != (node.left == nil)) ||
+        ((self.right == nil) != (node.right == nil))) {
+        return  NO;
+    }
+    if (self.left != nil) {
+        if (![self.left isTreeAMatch:node.left]) {
+            return NO;
+        }
+    }
+    if (self.right != nil) {
+        if (![self.right isTreeAMatch:node.right]) {
+            return NO;
+        }
+    }
+    return YES;
+}
+
+- (BOOL)isSubTree:(TreeNode *)node {
+    if ([self.value isEqual:node.value]) {
+        return [self isTreeAMatch:node];
+    }
+    if (self.left != nil && [self.left isSubTree:node]) {
+        return YES;
+    }
+    if (self.right != nil && [self.right isSubTree:node]) {
+        return YES;
+    }
+    return NO;
+}
+
+@end
+
+@implementation Solution
+- (void)run {
+
+}
+
+@end

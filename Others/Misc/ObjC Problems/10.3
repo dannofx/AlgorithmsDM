@@ -1,0 +1,79 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+
+@interface NSMutableArray(Utils)
++ (NSMutableArray *)arrayWithDefault:(id)dObject count:(int)count;
+@end
+
+@implementation NSMutableArray(Utils)
++ (NSMutableArray *)arrayWithDefault:(id)dObject count:(int)count {
+    NSMutableArray *array = [[NSMutableArray alloc] initWithCapacity:count];
+    for (int i = 0; i < count; i++) {
+        [array addObject:[dObject copy]];
+    }
+    return array;
+}
+@end
+
+
+@implementation Solution
+
+- (int)findOffsetIn:(NSArray *)array start:(int)start end:(int)end {
+    if ((end - start) < 1) {
+        return 0;
+    }
+    int startValue = [array[start] intValue];
+    int endValue = [array[end] intValue];
+    if ((end - start) == 1) {
+        return (startValue > endValue) ? end : start;
+    }
+    int middle = (end - start) / 2 + start;
+    int midValue = [array[middle] intValue];
+    if (startValue > midValue) {
+        return [self findOffsetIn:array start:start end:middle];
+    }
+    if (midValue > endValue) {
+        return [self findOffsetIn:array start:middle end:end];
+    }
+    return 0;
+}
+
+- (int)convertIndex:(int)index withOffset:(int)offset in:(NSArray *)array {
+    return (index + offset) % [array count];
+}
+
+- (int)searchNumber:(int)number in:(NSArray *)array start:(int)start end:(int)end offset:(int)offset success:(BOOL *)success {
+    if (start > end) {
+        *success = NO;
+    }
+    int middle = (end - start) / 2 + start;
+    int realMiddle = [self convertIndex:middle withOffset:offset in:array];
+    int midValue = [array[realMiddle] intValue];
+    if (midValue == number) {
+        *success = YES;
+        return realMiddle;
+    } else if (number < midValue) {
+        return [self searchNumber:number in:array start:start end:middle - 1 offset:offset success:success];
+    } else {
+        return [self searchNumber:number in:array start:middle + 1 end:end offset:offset success:success];
+    }
+    
+}
+
+- (int)searchNumber:(int)number in:(NSArray *)array success:(BOOL *)success {
+    int end = (int)[array count] - 1;
+    int offset = [self findOffsetIn:array start:0 end:end ];
+    return [self searchNumber:number in:array start:0 end:end offset:offset success:success];
+}
+
+- (void)run {
+}
+
+@end

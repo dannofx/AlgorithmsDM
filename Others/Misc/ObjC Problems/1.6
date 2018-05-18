@@ -1,0 +1,42 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+
+
+@implementation Solution
+
+- (NSString *)compress:(NSString *)string {
+    if ([string length] == 0) {
+        return string;
+    }
+    char lastChar = [string characterAtIndex:0];
+    int charCount = 0;
+    NSMutableString * result = [[NSMutableString alloc] init];
+    for (int i = 0; i < [string length]; i++) {
+        char character = [string characterAtIndex:i];
+        if (lastChar != character) {
+            [result appendFormat:@"%c%d", lastChar, charCount];
+            charCount = 0;
+            lastChar = character;
+        }
+        charCount += 1;
+    }
+    [result appendFormat:@"%c%d", lastChar, charCount];
+    return [NSString stringWithString:result];
+}
+
+- (void)run {
+    NSString *text = @"gooonnnaaacommmprrrreeeessssss";
+    NSString *compressed = [self compress:text];
+    NSLog(@"Compressed text %@", compressed);
+    
+}
+
+
+@end

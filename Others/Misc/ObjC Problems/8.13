@@ -1,0 +1,121 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+
+@interface NSMutableArray(Utils)
++ (NSMutableArray *)arrayWithDefault:(id)dObject count:(int)count;
+@end
+
+@implementation NSMutableArray(Utils)
++ (NSMutableArray *)arrayWithDefault:(id)dObject count:(int)count {
+    NSMutableArray *array = [[NSMutableArray alloc] initWithCapacity:count];
+    for (int i = 0; i < count; i++) {
+        [array addObject:[dObject copy]];
+    }
+    return array;
+}
+@end
+
+@interface NSString(Utils)
+-(NSMutableArray *)convertToCharArray;
+-(NSMutableDictionary *)convertToCharDictionary;
++(NSString *)convertToString:(NSArray *)array;
+@end
+
+@implementation NSString(Utils)
+-(NSMutableArray *)convertToCharArray {
+    NSMutableArray *characters = [[NSMutableArray alloc] init];
+    for (int i = 0; i < [self length]; i++) {
+        [characters addObject:@([self characterAtIndex:i])];
+    }
+    return characters;
+}
+
+-(NSMutableDictionary *)convertToCharDictionary {
+    NSMutableDictionary *characters = [[NSMutableDictionary alloc] init];
+    for (int i = 0; i < [self length]; i++) {
+        NSNumber * numChar = @([self characterAtIndex:i]);
+        if (characters[numChar] != nil) {
+            characters[numChar] = @([characters[numChar] intValue] + 1);
+        } else {
+            characters[numChar] = @(1);
+        }
+    }
+    return characters;
+}
+
++(NSString *)convertToString:(NSArray *)array {
+    NSMutableString *text = [[NSMutableString alloc] init];
+    for (NSNumber *numChar in array) {
+        [text appendFormat:@"%c", [numChar charValue]];
+    }
+    return [NSString stringWithString:text];
+}
+@end
+
+@interface Box: NSObject
+@property (nonatomic) int height;
+@property (nonatomic) int width;
+@property (nonatomic) int depth;
+@end
+
+@implementation Box
+- (id)initWithheight:(int)height width:(int)width depth:(int)depth {
+    self = [super init];
+    if (self) {
+        self.height = height;
+        self.width = width;
+        self.depth = depth;
+    }
+    return self;
+}
+
+- (NSComparisonResult)compare:(Box *)other {
+    if (self.height == other.height) {
+        return NSOrderedSame;
+    } else if (self.height > other.height) {
+        return NSOrderedAscending;
+    } else {
+        return NSOrderedDescending;
+    }
+}
+
+@end
+
+@implementation Solution
+
+- (int)calculatehighestStackWithBoxes:(NSArray *)boxes index:(int)index baseBox:(Box *) baseBox memo:(NSMutableArray *)memo{
+    if (index == [boxes count]) {
+        return 0;
+    }
+    int nextIndex = index + 1;
+    int withHeight = 0;
+    if (baseBox == nil || [baseBox compare: boxes[index]] == NSOrderedAscending) {
+        if ([memo[index] isEqual:[NSNull null]]) {
+            withHeight = ((Box *)boxes[index]).height + [self calculatehighestStackWithBoxes:boxes index:nextIndex baseBox:boxes[index] memo:memo];
+            memo[index] = @(withHeight);
+        } else {
+            withHeight = [memo[index] intValue];
+        }
+    }
+    int withoutHeight = [self calculatehighestStackWithBoxes:boxes index:nextIndex baseBox:baseBox memo:memo];
+    return MAX(withHeight, withoutHeight);
+}
+
+- (int)calculateHighestStack:(NSArray *)boxes {
+    NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"self" ascending:YES];
+    NSArray *sortedBoxes = [boxes sortedArrayUsingDescriptors:@[sortDescriptor]];
+    NSMutableArray * memo = [NSMutableArray arrayWithDefault:[NSNull null] count:(int)[boxes count]];
+    return [self calculatehighestStackWithBoxes:sortedBoxes index:0 baseBox:nil memo:memo];
+}
+
+- (void)run {
+}
+
+@end

@@ -1,0 +1,94 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+
+const NSUInteger numbersCount = 100;
+const NSUInteger bufferLimit = 40;
+const NSUInteger nsuintegerWidth = 64;
+
+@interface NSMutableArray(Utils)
++ (NSMutableArray *)arrayWithDefault:(id)dObject count:(int)count;
+@end
+
+@implementation NSMutableArray(Utils)
++ (NSMutableArray *)arrayWithDefault:(id)dObject count:(int)count {
+    NSMutableArray *array = [[NSMutableArray alloc] initWithCapacity:count];
+    for (int i = 0; i < count; i++) {
+        [array addObject:[dObject copy]];
+    }
+    return array;
+}
+@end
+
+@interface Listy: NSObject
+@property (nonatomic, retain) NSArray *numbers;
+- (id)initWithNumbers:(NSArray *)numbers;
+@end
+
+@implementation Listy
+
+- (id)initWithNumbers:(NSArray *)numbers {
+    self = [super init];
+    if (self) {
+        self.numbers = [numbers copy];
+    }
+    return self;
+}
+
+- (id)objectAtIndexedSubscript:(unsigned int)idx {
+    if (idx >= [self.numbers count]) {
+        return @(-1);
+    }
+    return self.numbers[idx];
+}
+
+@end
+
+@implementation Solution
+
+- (NSInteger)findMissingNumber:(NSArray *)numbers {
+    NSUInteger wordByteLength = nsuintegerWidth / 8;
+    NSUInteger arraySize = bufferLimit / wordByteLength;
+    if (bufferLimit % wordByteLength > 0) {
+        arraySize++;
+    }
+    NSUInteger presence[arraySize];
+    for (int i = 0; i < arraySize; i++) {
+        presence[i] = 0;
+    }
+    for (NSNumber * number in numbers) {
+        NSUInteger uNumber = [number unsignedIntegerValue];
+        NSUInteger contIndex = uNumber / nsuintegerWidth;
+        NSUInteger container = presence[contIndex];
+        NSUInteger bitIndex = uNumber % nsuintegerWidth;
+        NSUInteger mask = 1 << bitIndex;
+        container = container | mask;
+        presence[contIndex] = container;
+    }
+    for (int i = 0; i < arraySize; i++) {
+        NSUInteger container = presence[i];
+        for (NSUInteger bitIndex = 0; i < nsuintegerWidth; i++) {
+            NSUInteger mask = 1 << bitIndex;
+            if ((presence[i] & mask) == 0) {
+                NSUInteger missingNumber = container * nsuintegerWidth + bitIndex;
+                if (missingNumber > numbersCount) {
+                    return -1;
+                } else {
+                    return missingNumber;
+                }
+            }
+        }
+    }
+    return -1;
+}
+
+- (void)run {
+}
+
+@end

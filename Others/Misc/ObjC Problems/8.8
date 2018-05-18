@@ -1,0 +1,92 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+
+@interface NSMutableArray(Utils)
++ (NSMutableArray *)arrayWithDefault:(id)dObject count:(int)count;
+@end
+
+@implementation NSMutableArray(Utils)
++ (NSMutableArray *)arrayWithDefault:(id)dObject count:(int)count {
+    NSMutableArray *array = [[NSMutableArray alloc] initWithCapacity:count];
+    for (int i = 0; i < count; i++) {
+        [array addObject:[dObject copy]];
+    }
+    return array;
+}
+@end
+
+@interface NSString(Utils)
+-(NSMutableArray *)convertToCharArray;
+-(NSMutableDictionary *)convertToCharDictionary;
++(NSString *)convertToString:(NSArray *)array;
+@end
+
+@implementation NSString(Utils)
+-(NSMutableArray *)convertToCharArray {
+    NSMutableArray *characters = [[NSMutableArray alloc] init];
+    for (int i = 0; i < [self length]; i++) {
+        [characters addObject:@([self characterAtIndex:i])];
+    }
+    return characters;
+}
+
+-(NSMutableDictionary *)convertToCharDictionary {
+    NSMutableDictionary *characters = [[NSMutableDictionary alloc] init];
+    for (int i = 0; i < [self length]; i++) {
+        NSNumber * numChar = @([self characterAtIndex:i]);
+        if (characters[numChar] != nil) {
+            characters[numChar] = @([characters[numChar] intValue] + 1);
+        } else {
+            characters[numChar] = @(1);
+        }
+    }
+    return characters;
+}
+
++(NSString *)convertToString:(NSArray *)array {
+    NSMutableString *text = [[NSMutableString alloc] init];
+    for (NSNumber *numChar in array) {
+        [text appendFormat:@"%c", [numChar charValue]];
+    }
+    return [NSString stringWithString:text];
+}
+@end
+
+@implementation Solution
+
+- (NSArray *)generateAllPermutations:(NSString *)string {
+    NSMutableDictionary *characters = [string convertToCharDictionary];
+    NSMutableArray *prefix = [[NSMutableArray alloc] init];
+    NSMutableArray * permutations = [[NSMutableArray alloc] init];
+    [self generateAllPermutationsWithPrefix:prefix characters:characters size:(int)[string length] permutations:permutations];
+    return permutations;
+}
+
+- (void)generateAllPermutationsWithPrefix:(NSMutableArray *)prefix characters:(NSMutableDictionary *)characters size:(int)size permutations:(NSMutableArray *)permutations {
+    if ([prefix count] == size) {
+        [permutations addObject:[NSString convertToString:prefix]];
+    }
+    for (NSNumber *numChar in characters) {
+        int reps = [characters[numChar] intValue];
+        if (reps > 0) {
+            [prefix addObject:numChar];
+            characters[numChar] = @(reps - 1);
+            [self generateAllPermutationsWithPrefix:prefix characters:characters size:size permutations:permutations];
+            [prefix removeLastObject];
+            characters[numChar] = @(reps);
+        }
+    }    
+}
+
+
+- (void)run {
+}
+
+@end

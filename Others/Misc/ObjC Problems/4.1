@@ -1,0 +1,144 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+
+@interface QueueNode<ObjectType>: NSObject
+@property (nonatomic, retain) ObjectType value;
+@property (nonatomic, retain) QueueNode<ObjectType> *next;
+
+- (id)initWithValue:(ObjectType)value;
+
+@end
+
+@implementation QueueNode
+
+- (id)initWithValue:(id)value {
+    self = [super self];
+    if (self) {
+        self.value = value;
+    }
+    return self;
+}
+@end
+
+@interface Queue<ObjectType>: NSObject
+@property (nonatomic, readonly) NSUInteger count;
+- (ObjectType)peek;
+- (ObjectType)dequeue;
+- (void)queue:(ObjectType)element;
+@end
+
+@implementation Queue {
+    QueueNode<id> *head;
+    QueueNode<id> *tail;
+    int _count;
+}
+
+- (id)init {
+    self = [super init];
+    if (self) {
+        _count = 0;
+    }
+    return self;
+}
+
+- (id)peek {
+    return head;
+}
+
+- (id)dequeue {
+    QueueNode *node = head;
+    if (node != nil) {
+        _count--;
+        if (head == tail) {
+            tail = nil;
+        }
+        head = head.next;
+        node.next = nil;
+        // tail?
+        return node.value;
+    }
+    return nil;
+}
+
+- (void)queue:(id)element {
+    QueueNode *newNode = [[QueueNode alloc] initWithValue:element];
+    _count++;
+    if (head == nil) {
+        head = newNode;
+        tail = head;
+    } else {
+        tail.next = newNode;
+        tail = newNode;
+    }
+}
+
+- (NSUInteger)count {
+    return _count;
+}
+
+@end
+
+@interface GraphNode: NSObject
+@property (nonatomic, retain) NSString *value;
+@property (nonatomic, retain) NSArray<GraphNode *> *edges;
+@end
+
+@implementation GraphNode
+- (id)initWithValue:(NSString *)value {
+    self = [super init];
+    if (self) {
+        self.value = value;
+    }
+    return self;
+}
+@end
+
+@interface Graph: NSObject
+@property (nonatomic, retain) NSArray * nodes;
+@end
+
+@implementation Graph
+
+- (id)init {
+    self = [super init];
+    if (self) {
+        self.nodes = [[NSArray alloc] init];
+    }
+    return self;
+}
+
+- (BOOL)findPathBetweenNode:(GraphNode *)node1 andNode:(GraphNode *)node2 {
+    NSMutableSet<NSString *> *visited = [[NSMutableSet<NSString *> alloc] init];
+    Queue<GraphNode *> *queue = [[Queue<GraphNode *> alloc] init];
+    [queue queue:node1];
+    [visited addObject:node1.value];
+    while (queue.count > 0) {
+        GraphNode *currentNode = [queue dequeue];
+        if (currentNode.value == node2.value) {
+            return YES;
+        }
+        for (GraphNode *edge in currentNode.edges) {
+            if (![visited containsObject:edge.value]) {
+                [queue queue:edge];
+                [visited addObject:edge.value];
+            }
+        }
+    }
+    return NO;
+}
+
+@end
+
+@implementation Solution
+- (void)run {
+
+}
+
+@end

@@ -1,0 +1,104 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+
+@interface NSMutableArray(Utils)
++ (NSMutableArray *)arrayWithDefault:(id)dObject count:(int)count;
+@end
+
+@implementation NSMutableArray(Utils)
++ (NSMutableArray *)arrayWithDefault:(id)dObject count:(int)count {
+    NSMutableArray *array = [[NSMutableArray alloc] initWithCapacity:count];
+    for (int i = 0; i < count; i++) {
+        [array addObject:[dObject copy]];
+    }
+    return array;
+}
+@end
+
+@interface NSString(Utils)
+-(NSMutableArray *)convertToCharArray;
+-(NSMutableDictionary *)convertToCharDictionary;
++(NSString *)convertToString:(NSArray *)array;
+@end
+
+@implementation NSString(Utils)
+-(NSMutableArray *)convertToCharArray {
+    NSMutableArray *characters = [[NSMutableArray alloc] init];
+    for (int i = 0; i < [self length]; i++) {
+        [characters addObject:@([self characterAtIndex:i])];
+    }
+    return characters;
+}
+
+-(NSMutableDictionary *)convertToCharDictionary {
+    NSMutableDictionary *characters = [[NSMutableDictionary alloc] init];
+    for (int i = 0; i < [self length]; i++) {
+        NSNumber * numChar = @([self characterAtIndex:i]);
+        if (characters[numChar] != nil) {
+            characters[numChar] = @([characters[numChar] intValue] + 1);
+        } else {
+            characters[numChar] = @(1);
+        }
+    }
+    return characters;
+}
+
++(NSString *)convertToString:(NSArray *)array {
+    NSMutableString *text = [[NSMutableString alloc] init];
+    for (NSNumber *numChar in array) {
+        [text appendFormat:@"%c", [numChar charValue]];
+    }
+    return [NSString stringWithString:text];
+}
+@end
+
+@implementation Solution
+
+- (BOOL)isValidPosition:(int)index queens:(NSArray *)queens {
+    int cColumn = [queens[index] intValue];
+    int cRow = index;
+    for (int vRow = 0; vRow < index; vRow++) {
+        int vColumn = [queens[vRow] intValue];
+        int cDistance = ABS(cColumn - vColumn);
+        int rDistance = ABS(cRow - vRow);
+        if (cDistance == rDistance) {
+            return NO;
+        }
+    }
+    return YES;
+}
+
+- (void)calculateQueens:(NSMutableArray *)queens index:(int)index results:(NSMutableArray *)results {
+    if (index == [queens count]) {
+        [results addObject:queens];
+        return;
+    }
+    for (int i = index; i < [queens count]; i++) {
+        [queens exchangeObjectAtIndex:i withObjectAtIndex:index];
+        if ([self isValidPosition:index queens:queens]) {
+            [self calculateQueens:queens index:index + 1 results:results];
+        }
+        [queens exchangeObjectAtIndex:index withObjectAtIndex:i];
+    }
+}
+
+- (NSArray *)calculateQueensPositions:(int)n {
+    NSMutableArray *results = [[NSMutableArray alloc] init];
+    NSMutableArray *queens = [[NSMutableArray alloc] init];
+    for (int i = 0; i < n; i++) {
+        [queens addObject:@(i)];
+    }
+    return [NSArray arrayWithArray:results];
+}
+
+- (void)run {
+}
+
+@end

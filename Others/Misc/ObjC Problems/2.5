@@ -1,0 +1,76 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+
+@interface Node<__covariant ObjectType: NSObject *>: NSObject
+@property (nonatomic, retain) ObjectType value;
+@property (nonatomic, retain) Node<ObjectType> *next;
+
+- (id)initWithValue:(ObjectType)value;
+@end
+
+@implementation Node
+
+- (id)initWithValue:(id)value{
+    self = [super init];
+    if (self) {
+        self.value = value;
+    }
+    return self;
+}
+
+- (Node *)createNodeAtTailWithValue:(id)value {
+    Node *newNode = [[Node alloc] initWithValue:value];
+    Node *currentNode = self;
+    while (true) {
+        if (currentNode.next == nil) {
+            currentNode.next = newNode;
+            break;
+        }
+        currentNode = currentNode.next;
+    }
+    return newNode;
+}
+
+- (Node *)sumList1:(Node *)node1 list2:(Node *)node2 len1:(int)len1 len2:(int)len2 carry:(int *)carry level:(int) level {
+    if (len2 > len1 && level == 0) {
+        return [self sumList1:node2 list2:node1 len1:len2 len2:len1 carry:carry level:level];
+    }
+    if (node1.next == nil && node2.next == nil) {
+        int sum = [node1.value intValue] + [node2.value intValue];
+        int digit = sum % 10;
+        int newCarry = sum / 10;
+        Node *newNode = [[Node alloc] initWithValue:@(digit)];
+        *carry = newCarry;
+        return newNode;
+    }
+    int offset = len1 - len2;
+    int val1 = [node1.value intValue];
+    int val2 = 0;
+    Node *otherNode = node2;
+    if (level >= offset) {
+        val2 = [node2.value intValue];
+        otherNode = otherNode.next;
+    }
+    
+    Node *nextNode = [self sumList1:node1.next list2:otherNode len1:len1 len2:len2 carry:carry level:level + 1];
+    int sum = val1 + val2 + *carry;
+    int digit = sum / 10;
+    *carry = sum % 10;
+    Node *newNode = [[Node alloc] initWithValue:@(digit)];
+    newNode.next = nextNode;
+    return newNode;
+}
+@end
+@implementation Solution
+- (void)run {
+
+}
+
+@end

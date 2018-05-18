@@ -1,0 +1,102 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+
+
+@interface Coordinate: NSObject
+@property (nonatomic) NSUInteger row;
+@property (nonatomic) NSUInteger column;
+- (id)initWithRow:(NSUInteger)row column:(NSUInteger)column;
+- (BOOL)isInBounds:(NSArray *)matrix;
+- (BOOL)isBefore:(Coordinate *)other;
+@end
+
+@implementation Coordinate
+- (id)initWithRow:(NSUInteger)row column:(NSUInteger)column {
+    self = [super init];
+    if (self) {
+        self.row = row;
+        self.column = column;
+    }
+    return self;
+}
+
+- (id)initWithMin:(Coordinate *)min max:(Coordinate *)max {
+    self = [super init];
+    if (self) {
+        self.row = min.row + (max.row - min.row) / 2;
+        self.column = min.column + (max.column - min.column) / 2;
+    }
+    return self;
+}
+
+- (BOOL)isInBounds:(NSArray *)matrix {
+    return YES;
+}
+
+- (BOOL)isBefore:(Coordinate *)other {
+    return YES;
+}
+@end
+
+@implementation Solution
+
+- (Coordinate *)partitionAndFindValue:(int)element matrix:(NSArray *)matrix origin:(Coordinate *)origin last:(Coordinate *)last pivot:(Coordinate *)pivot {
+    Coordinate *upperRightOrigin = [[Coordinate alloc] initWithRow:origin.row column:pivot.column];
+    Coordinate *upperRightLast = [[Coordinate alloc] initWithRow:pivot.row - 1 column:last.column];
+    Coordinate *lowerLeftOrigin = [[Coordinate alloc] initWithRow:pivot.row column:origin.column];
+    Coordinate *lowerLeftLast = [[Coordinate alloc] initWithRow:last.row column:pivot.column - 1];
+    Coordinate *result = [self findElementCoordinate:element matrix:matrix origin:upperRightOrigin last:upperRightLast];
+    if (result == nil) {
+        result = [self findElementCoordinate:element matrix:matrix origin:lowerLeftOrigin last:lowerLeftLast];
+    }
+    return result;
+}
+
+- (Coordinate *)findElementCoordinate:(int)element matrix:(NSArray *)matrix origin:(Coordinate *)origin last:(Coordinate *)last {
+    if (![origin isInBounds:matrix] || ![last isInBounds:matrix]) {
+        return nil;
+    }
+    if ([matrix[origin.row][origin.column] intValue] == element) {
+        return origin;
+    } else if (![origin isBefore:last]) {
+        return nil;
+    }
+    Coordinate *start = [origin copy];
+    NSUInteger diagonalSize = MIN(last.row - origin.row, last.column - origin.column);
+    Coordinate *end = [[Coordinate alloc] initWithRow:start.row + diagonalSize column:start.column + diagonalSize];
+    while ([start isBefore:end]) {
+        Coordinate *middle = [[Coordinate alloc] initWithMin:start max:end];
+        int midValue = [matrix[middle.row][middle.column] intValue];
+        if (midValue == element) {
+            return middle;
+        } else if (midValue > element) {
+            end.row = middle.row - 1;
+            end.column = middle.column -1;
+        } else {
+            start.row = middle.row + 1;
+            start.column = middle.column + 1;
+        }
+    }
+    return [self partitionAndFindValue:element matrix:matrix origin:origin last:last pivot:start];
+}
+
+- (Coordinate *)findElementCoordinate:(int)element matrix:(NSArray<NSArray<NSNumber *> *> *)matrix {
+    if ([matrix count] == 0 || [matrix[0] count] == 0) {
+        return nil;
+    }
+    Coordinate *origin = [[Coordinate alloc] initWithRow:0 column:0];
+    Coordinate *last = [[Coordinate alloc] initWithRow:[matrix count] - 1 column:[matrix[0] count] - 1];
+    return [self findElementCoordinate:element matrix:matrix origin:origin last:last];
+}
+
+- (void)run {
+}
+
+@end

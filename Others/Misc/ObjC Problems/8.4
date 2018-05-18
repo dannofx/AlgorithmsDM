@@ -1,0 +1,52 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+
+@interface NSMutableArray(Utils)
++ (NSMutableArray *)arrayWithDefault:(id)dObject count:(int)count;
+@end
+
+@implementation NSMutableArray(Utils)
++ (NSMutableArray *)arrayWithDefault:(id)dObject count:(int)count {
+    NSMutableArray *array = [[NSMutableArray alloc] initWithCapacity:count];
+    for (int i = 0; i < count; i++) {
+        [array addObject:[dObject copy]];
+    }
+    return array;
+}
+@end
+
+
+@implementation Solution
+
+- (NSArray *)findSubsets:(NSArray *)items {
+    return [NSArray arrayWithArray:[self findSubsets:items index:0]];
+}
+
+- (NSMutableArray *)findSubsets:(NSArray *)items index:(int)index {
+    NSMutableArray *allSubsets;
+    if ([allSubsets count] == index) {
+        allSubsets = [[NSMutableArray alloc] init];
+        [allSubsets addObject:[[NSArray alloc] init]];
+        return allSubsets;
+    }
+    allSubsets = [self findSubsets:items index:index + 1];
+    NSMutableArray * incSubsets = [[NSMutableArray alloc] init];
+    for (NSArray *subset in allSubsets) {
+        NSMutableArray *incSubset = [[NSMutableArray alloc] initWithObjects:items[index], nil];
+        [incSubset addObjectsFromArray:subset];
+        [incSubsets addObject:incSubset];
+    }
+    [allSubsets addObjectsFromArray:incSubsets];
+    return allSubsets;
+}
+- (void)run {
+}
+
+@end

@@ -1,0 +1,92 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+
+@interface NSMutableArray(Utils)
++ (NSMutableArray *)arrayWithDefault:(id)dObject count:(int)count;
+@end
+
+@implementation NSMutableArray(Utils)
++ (NSMutableArray *)arrayWithDefault:(id)dObject count:(int)count {
+    NSMutableArray *array = [[NSMutableArray alloc] initWithCapacity:count];
+    for (int i = 0; i < count; i++) {
+        [array addObject:[dObject copy]];
+    }
+    return array;
+}
+@end
+
+@interface Stack<ObjectType>: NSObject
+@property (nonatomic, readonly) NSUInteger count;
+- (ObjectType)peek;
+- (ObjectType)pop;
+- (void)push:(ObjectType)element;
+@end
+
+@interface Stack(Private)
+@property (nonatomic, retain) NSMutableArray *items;
+@end
+
+@implementation Stack
+- (id)peek {
+    return self.items.lastObject;
+}
+
+- (id)pop {
+    if ([self.items count] > 0) {
+        id last = self.items.lastObject;
+        [self.items removeLastObject];
+        return last;
+    } else {
+        return nil;
+    }
+}
+
+- (void)push:(id)element {
+    [self.items addObject:element];
+}
+
+- (NSUInteger)count {
+    return [self.items count];
+}
+
+@end
+
+@interface Tower: NSObject
+@property (nonatomic, retain) Stack<NSNumber *> * stack;
+- (void)moveTo:(Tower *)tower;
+@end
+
+@interface Tower()
+- (void)moveItems:(int)n toTower:(Tower *)destiny auxiliar:(Tower *)aux;
+@end
+
+
+@implementation Tower
+- (void)moveTo:(Tower *)tower {
+    Tower *aux = [[Tower alloc] init];
+    [self moveItems:(int)[self.stack count] toTower:tower auxiliar:aux];
+}
+
+- (void)moveItems:(int)n toTower:(Tower *)destiny auxiliar:(Tower *)aux {
+    if (n > 0) {
+        [self moveItems:n - 1 toTower:aux auxiliar:destiny];
+        [destiny.stack push:[self.stack pop]];
+        [aux moveItems:n - 1 toTower:destiny auxiliar:self];
+    }
+}
+
+@end
+
+@implementation Solution
+
+- (void)run {
+}
+
+@end

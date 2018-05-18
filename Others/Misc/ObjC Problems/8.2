@@ -1,0 +1,91 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+
+@interface NSMutableArray(Utils)
++ (NSMutableArray *)arrayWithDefault:(id)dObject count:(int)count;
+@end
+
+@implementation NSMutableArray(Utils)
++ (NSMutableArray *)arrayWithDefault:(id)dObject count:(int)count {
+    NSMutableArray *array = [[NSMutableArray alloc] initWithCapacity:count];
+    for (int i = 0; i < count; i++) {
+        [array addObject:[dObject copy]];
+    }
+    return array;
+}
+@end
+
+@interface Position: NSObject
+@property (nonatomic) int row;
+@property (nonatomic) int column;
+- (id)initWithRow:(int)row column:(int)column;
+@end
+
+@implementation Position
+- (id)initWithRow:(int)row column:(int)column {
+    self = [super init];
+    if (self) {
+        self.row = row;
+        self.column = column;
+    }
+    return self;
+}
+
+- (NSUInteger)hash {
+    return self.row ^ self.column;
+}
+
+- (BOOL)isEqual:(Position *)object {
+    return self.row == object.row && self.column == object.column;
+}
+
+@end
+
+@implementation Solution
+
+- (BOOL)findPathWithCurrentPosition:(Position *)current matrix:(NSMutableArray *)matrix path:(NSMutableArray *)path failed:(NSMutableSet *)failed {
+    if (current.row < 0 || current.column < 0 || ![matrix[current.row][current.column] boolValue]) {
+        return NO;
+    }
+    if ([failed containsObject:current]) {
+        return NO;
+    }
+    int nextRow = current.row - 1;
+    int nextColumn = current.column - 1;
+    if ((current.row == 0 && current.column == 0) ||
+        [self findPathWithCurrentPosition:[[Position alloc] initWithRow:nextRow column:nextColumn] matrix:matrix path:path failed:failed] ||
+        [self findPathWithCurrentPosition:[[Position alloc] initWithRow:current.row column:nextColumn] matrix:matrix path:path failed:failed] ||
+        [self findPathWithCurrentPosition:[[Position alloc] initWithRow:nextRow column:current.column] matrix:matrix path:path failed:failed]) {
+        [path addObject:current];
+        return YES;
+    }
+    [failed addObject:current];
+    return NO;
+}
+
+- (NSArray *)findRobotPathWithRows:(int)rows columns:(int)columns obstacles:(NSArray *)obstacles {
+    NSMutableArray *matrix = [NSMutableArray arrayWithDefault:[NSMutableArray arrayWithDefault:@(YES) count:columns] count:rows];
+    for (Position *obstacle in obstacles) {
+        matrix[obstacle.row][obstacle.column] = @(NO);
+    }
+    NSMutableArray *path = [[NSMutableArray alloc] init];
+    NSMutableSet *failed = [[NSMutableSet alloc] init];
+    Position *start = [[Position alloc] initWithRow:rows - 1 column:columns - 1];
+    if ([self findPathWithCurrentPosition:start matrix:matrix path:path failed:failed]) {
+        return path;
+    } else {
+        return nil;
+    }
+}
+
+- (void)run {
+}
+
+@end

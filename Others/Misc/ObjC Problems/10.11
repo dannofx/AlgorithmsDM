@@ -1,0 +1,53 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+
+const NSUInteger numbersCount = 100;
+const NSUInteger bufferLimit = 40;
+const NSUInteger nsuintegerWidth = 64;
+
+@interface NSMutableArray(Utils)
++ (NSMutableArray *)arrayWithDefault:(id)dObject count:(int)count;
+@end
+
+@implementation NSMutableArray(Utils)
++ (NSMutableArray *)arrayWithDefault:(id)dObject count:(int)count {
+    NSMutableArray *array = [[NSMutableArray alloc] initWithCapacity:count];
+    for (int i = 0; i < count; i++) {
+        [array addObject:[dObject copy]];
+    }
+    return array;
+}
+@end
+
+@implementation Solution
+
+- (void)sortPeaksAndValleys:(NSMutableArray *)numbers {
+    for (int i = 0; i < [numbers count]; i += 2) {
+        int prev = i - 1;
+        int next = i + 1;
+        int smallest = [numbers[i] intValue];
+        int sIndex = i;
+        if (prev >= 0 && [numbers[prev] intValue] < smallest) {
+            sIndex = prev;
+            smallest = [numbers[i] intValue];
+        }
+        if (next < [numbers count] && [numbers[next] intValue] < smallest) {
+            sIndex = next;
+        }
+        if (sIndex != i) {
+            [numbers exchangeObjectAtIndex:sIndex withObjectAtIndex:i];
+        }
+    }
+}
+
+- (void)run {
+}
+
+@end

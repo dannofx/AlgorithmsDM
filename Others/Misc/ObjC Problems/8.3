@@ -1,0 +1,51 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+
+@interface NSMutableArray(Utils)
++ (NSMutableArray *)arrayWithDefault:(id)dObject count:(int)count;
+@end
+
+@implementation NSMutableArray(Utils)
++ (NSMutableArray *)arrayWithDefault:(id)dObject count:(int)count {
+    NSMutableArray *array = [[NSMutableArray alloc] initWithCapacity:count];
+    for (int i = 0; i < count; i++) {
+        [array addObject:[dObject copy]];
+    }
+    return array;
+}
+@end
+
+
+@implementation Solution
+
+- (int)findMagicIndexWithItems:(NSArray *)items {
+    return [self findMagicIndexWithItems:items start:0 end:(int)[items count] - 1];
+}
+
+- (int)findMagicIndexWithItems:(NSArray *)items start:(int)start end:(int)end {
+    if (end < start) {
+        return -1;
+    }
+    int middle = (end - start) / 2 + start;
+    int midVal = [items[middle] intValue];
+    if (midVal == middle) {
+        return middle;
+    }
+    int mIndex = [self findMagicIndexWithItems:items start:start end:MIN(middle - 1, midVal)];
+    if (mIndex != -1) {
+        return mIndex;
+    }
+    return [self findMagicIndexWithItems:items start:MAX(middle + 1, midVal) end:end];
+    
+}
+- (void)run {
+}
+
+@end

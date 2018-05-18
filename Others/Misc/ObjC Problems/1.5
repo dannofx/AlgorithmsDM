@@ -1,0 +1,54 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+
+
+@implementation Solution
+
+- (BOOL)areOneEditAwayString1:(NSString *)string1 string2:(NSString *)string2 {
+    if (abs((int)([string1 length] - [string2 length])) > 1) {
+        return NO;
+    }
+    if ([string1 length] < [string2 length]) {
+        return [self areOneEditAwayString1:string2 string2:string1];
+    }
+    BOOL editDetected = NO;
+    int index1 = 0;
+    int index2 = 0;
+    while (index1 < [string1 length] && index2 < [string2 length]) {
+        if ([string1 characterAtIndex:index1] != [string2 characterAtIndex:index2]) {
+            if (editDetected) {
+                return NO;
+            }
+            index1++;
+            editDetected = YES;
+        }
+        index1++;
+        index2++;
+    }
+    if (editDetected) {
+        return [string1 length] == [string2 length];
+    } else {
+        return [string1 length] != [string2 length];
+    }
+}
+
+- (void)run {
+    NSString *text1 = @"TactCoa";
+    NSString *text2 = @"TactCoa2";
+    BOOL oneEditAway = [self areOneEditAwayString1:text1 string2:text2];
+    if (oneEditAway) {
+        NSLog(@"One edit away");
+    } else {
+        NSLog(@"No edit away");
+    }
+}
+
+
+@end

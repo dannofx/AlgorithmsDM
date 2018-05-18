@@ -1,0 +1,121 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+
+@interface QueueNode<ObjectType>: NSObject
+@property (nonatomic, retain) ObjectType value;
+@property (nonatomic, retain) QueueNode<ObjectType> *next;
+
+- (id)initWithValue:(ObjectType)value;
+
+@end
+
+@implementation QueueNode
+
+- (id)initWithValue:(id)value {
+    self = [super self];
+    if (self) {
+        self.value = value;
+    }
+    return self;
+}
+@end
+
+@interface Queue<ObjectType>: NSObject
+@property (nonatomic, readonly) NSUInteger count;
+- (ObjectType)peek;
+- (ObjectType)dequeue;
+- (void)queue:(ObjectType)element;
+@end
+
+@implementation Queue {
+    QueueNode<id> *head;
+    QueueNode<id> *tail;
+    int _count;
+}
+
+- (id)init {
+    self = [super init];
+    if (self) {
+        _count = 0;
+    }
+    return self;
+}
+
+- (id)peek {
+    return head;
+}
+
+- (id)dequeue {
+    QueueNode *node = head;
+    if (node != nil) {
+        _count--;
+        if (head == tail) {
+            tail = nil;
+        }
+        head = head.next;
+        node.next = nil;
+        // tail?
+        return node.value;
+    }
+    return nil;
+}
+
+- (void)queue:(id)element {
+    QueueNode *newNode = [[QueueNode alloc] initWithValue:element];
+    _count++;
+    if (head == nil) {
+        head = newNode;
+        tail = head;
+    } else {
+        tail.next = newNode;
+        tail = newNode;
+    }
+}
+
+- (NSUInteger)count {
+    return _count;
+}
+
+@end
+
+@interface TreeNode: NSObject
+@property (nonatomic) int value;
+@property (nonatomic, retain) TreeNode *left;
+@property (nonatomic, retain) TreeNode *right;
+@end
+
+@implementation TreeNode
+- (id)initWithValue:(int)value {
+    self = [super init];
+    if (self) {
+        self.value = value;
+    }
+    return self;
+}
+
++ (TreeNode *)createTreeFrom:(NSArray *)numbers start:(int)start end:(int)end {
+    if (start > end) {
+        return nil;
+    }
+    int middle = (end - start) / 2 + start;
+    TreeNode *node = [[TreeNode alloc] initWithValue:[numbers[middle] intValue]];
+    node.left = [TreeNode createTreeFrom:numbers start:start end:middle - 1];
+    node.left = [TreeNode createTreeFrom:numbers start:middle + 1 end:end];
+    return node;
+}
+
+@end
+
+@implementation Solution
+- (void)run {
+
+}
+
+@end

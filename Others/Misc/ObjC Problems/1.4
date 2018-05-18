@@ -1,0 +1,52 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+
+
+@implementation Solution
+
+//- (BOOL)isPalindromePermutation:(NSString *)text {
+//    NSString * cleanText = [text lowercaseString];
+//    int startChar = 'a';
+//    int odds = 0;
+//    for (int i = 0; i < [cleanText length]; i++) {
+//        int offset = [cleanText characterAtIndex:i] - startChar;
+//        int mask = 1 << offset;
+//        odds = odds ^ mask;
+//    }
+//    return ((odds - 1) & odds) == 0;
+//}
+
+- (BOOL)isPalindromePermutation:(NSString *)text {
+    NSString * cleanText = [text lowercaseString];
+    NSMutableSet *set = [[NSMutableSet alloc] init];
+    for (int i = 0; i < [cleanText length]; i++) {
+        char character = [cleanText characterAtIndex:i];
+        NSNumber *charNum = @(character);
+        if ([set containsObject:charNum]) {
+            [set removeObject:charNum];
+        } else {
+            [set addObject:charNum];
+        }
+    }
+    return [set count] <= 1;
+}
+
+- (void)run {
+    NSString *text = @"TactCoa";
+    BOOL isPal = [self isPalindromePermutation:text];
+    if (isPal) {
+        NSLog(@"Is palindrome");
+    } else {
+        NSLog(@"Is not palindrome");
+    }
+}
+
+
+@end

@@ -1,0 +1,83 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+@interface Stack<ObjectType>: NSObject
+- (ObjectType)peek;
+- (ObjectType)pop;
+- (void)push:(ObjectType)element;
+@end
+
+@interface Stack(Private)
+@property (nonatomic, retain) NSMutableArray *items;
+@end
+
+@implementation Stack
+- (id)peek {
+    return self.items.lastObject;
+}
+
+- (id)pop {
+    if ([self.items count] > 0) {
+        id last = self.items.lastObject;
+        [self.items removeLastObject];
+        return last;
+    } else {
+        return nil;
+    }
+}
+
+- (void)push:(id)element {
+    [self.items addObject:element];
+}
+@end
+
+@interface MinStack: NSObject
+- (NSNumber *)peek;
+- (NSNumber *)pop;
+- (NSNumber *)minValue;
+- (void)push:(NSNumber *)element;
+@end
+
+@implementation MinStack {
+    Stack<NSNumber *> *stack;
+    Stack<NSNumber *> *minStack;
+}
+
+- (NSNumber *)peek {
+    return [stack peek];
+}
+
+- (NSNumber *)pop {
+    NSNumber *popped = [stack pop];
+    if (popped != nil && [popped isEqual:[self minValue]]) {
+        [minStack pop];
+    }
+    return popped;
+}
+
+- (void)push:(NSNumber *)element {
+    NSNumber *min = [self minValue];
+    if (min != nil && [element intValue] <= [min intValue]) {
+        [minStack push:element];
+    }
+    [stack push:element];
+}
+
+- (NSNumber *)minValue {
+    return [minStack peek];
+}
+
+@end
+
+@implementation Solution
+- (void)run {
+
+}
+
+@end

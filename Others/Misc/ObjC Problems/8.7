@@ -1,0 +1,70 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+
+@interface NSMutableArray(Utils)
++ (NSMutableArray *)arrayWithDefault:(id)dObject count:(int)count;
+@end
+
+@implementation NSMutableArray(Utils)
++ (NSMutableArray *)arrayWithDefault:(id)dObject count:(int)count {
+    NSMutableArray *array = [[NSMutableArray alloc] initWithCapacity:count];
+    for (int i = 0; i < count; i++) {
+        [array addObject:[dObject copy]];
+    }
+    return array;
+}
+@end
+
+@interface NSString(Utils)
+-(NSMutableArray *)convertToCharArray;
++(NSString *)convertToString:(NSArray *)array;
+@end
+
+@implementation NSString(Utils)
+-(NSMutableArray *)convertToCharArray {
+    NSMutableArray *characters = [[NSMutableArray alloc] init];
+    for (int i = 0; i < [self length]; i++) {
+        [characters addObject:@([self characterAtIndex:i])];
+    }
+    return characters;
+}
++(NSString *)convertToString:(NSArray *)array {
+    NSMutableString *text = [[NSMutableString alloc] init];
+    for (NSNumber *numChar in array) {
+        [text appendFormat:@"%c", [numChar charValue]];
+    }
+    return [NSString stringWithString:text];
+}
+@end
+
+@implementation Solution
+
+- (NSArray *)generateAllPermutations:(NSString *)string {
+    NSMutableArray *characters = [string convertToCharArray];
+    NSMutableArray *permutations = [[NSMutableArray alloc] init];
+    [self generatePermutationsWith:characters index:0 permutations:permutations];
+    return permutations;
+}
+
+- (void)generatePermutationsWith:(NSMutableArray *)characters index:(int)index permutations:(NSMutableArray *)permutations {
+    if (index == [characters count]) {
+        [permutations addObject:[NSString convertToString:characters]];
+    }
+    for (int i = index; i < [characters count]; i++) {
+        [characters exchangeObjectAtIndex:index withObjectAtIndex:i];
+        [self generatePermutationsWith:characters index:index + 1 permutations:permutations];
+        [characters exchangeObjectAtIndex:i withObjectAtIndex:index];
+    }
+}
+
+- (void)run {
+}
+
+@end

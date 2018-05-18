@@ -1,0 +1,67 @@
+//
+//  Solution.m
+//  Practice
+//
+//  Created by Danno on 5/9/18.
+//  Copyright © 2018 Danno. All rights reserved.
+//
+
+#import "Solution.h"
+
+@interface Node<__covariant ObjectType: NSObject *>: NSObject
+@property (nonatomic, retain) ObjectType value;
+@property (nonatomic, retain) Node<ObjectType> *next;
+
+- (id)initWithValue:(ObjectType)value;
+@end
+
+@implementation Node
+
+- (id)initWithValue:(id)value{
+    self = [super init];
+    if (self) {
+        self.value = value;
+    }
+    return self;
+}
+
+- (Node *)createNodeAtTailWithValue:(id)value {
+    Node *newNode = [[Node alloc] initWithValue:value];
+    Node *currentNode = self;
+    while (true) {
+        if (currentNode.next == nil) {
+            currentNode.next = newNode;
+            break;
+        }
+        currentNode = currentNode.next;
+    }
+    return newNode;
+}
+
+- (Node *)createPartListWithValue:(id)value {
+    Node *head = self;
+    Node *tail = self;
+    Node *currentNode = self.next;
+    self.next = nil;
+    while (currentNode != nil) {
+        Node *nextNode = currentNode.next;
+        if([currentNode.value intValue] < [value intValue]) {
+            currentNode.next = head;
+            head = currentNode;
+        } else {
+            tail.next = currentNode;
+            currentNode.next = nil;
+            tail = currentNode;
+        }
+        currentNode = nextNode;
+    }
+    return head;
+}
+
+@end
+@implementation Solution
+- (void)run {
+
+}
+
+@end
